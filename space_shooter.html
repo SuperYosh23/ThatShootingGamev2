@@ -5,76 +5,283 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Space Shooter</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
             background: #000;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: 'Courier New', monospace;
-            overflow: hidden;
         }
         
         #gameContainer {
             position: relative;
-            border: 2px solid #0ff;
-            box-shadow: 0 0 20px #0ff;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         
         #gameCanvas {
-            display: block;
             background: linear-gradient(180deg, #000428 0%, #004e92 100%);
+            border: 2px solid #0ff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            max-width: 100%;
+            max-height: 100%;
         }
         
-        #ui {
+        #hud {
             position: absolute;
-            top: 10px;
-            left: 10px;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            z-index: 10;
+        }
+        
+        .hud-panel {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #0ff;
+            border-radius: 10px;
+            padding: 15px;
+            color: #fff;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 255, 255, 0.3);
+            pointer-events: auto;
+        }
+        
+        .hud-left {
+            min-width: 200px;
+        }
+        
+        .hud-right {
+            min-width: 250px;
+        }
+        
+        .hud-item {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .hud-label {
+            color: #0ff;
+            margin-right: 10px;
+            min-width: 80px;
+        }
+        
+        .hud-value {
             color: #fff;
             font-size: 18px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            z-index: 10;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
         }
         
-        #upgradePanel {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #fff;
+        .upgrade-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #0ff;
+        }
+        
+        .upgrade-title {
+            color: #0ff;
+            font-weight: bold;
+            margin-bottom: 10px;
             font-size: 14px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
-            z-index: 10;
-            text-align: right;
-            background: rgba(0,0,0,0.7);
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #0ff;
         }
         
         .upgrade-btn {
-            background: #0ff;
+            background: linear-gradient(135deg, #0ff, #088);
             border: none;
-            padding: 5px 10px;
+            padding: 8px 12px;
             margin: 5px 0;
             cursor: pointer;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            transition: all 0.3s;
+            border-radius: 5px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #000;
+            transition: all 0.3s ease;
             width: 100%;
+            box-shadow: 0 2px 10px rgba(0, 255, 255, 0.3);
         }
         
         .upgrade-btn:hover:not(:disabled) {
-            background: #fff;
-            color: #000;
+            background: linear-gradient(135deg, #fff, #0ff);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.5);
         }
         
         .upgrade-btn:disabled {
-            background: #666;
+            background: #333;
+            color: #666;
             cursor: not-allowed;
             opacity: 0.5;
+            transform: none;
+        }
+        
+        .enemy-info {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #0ff;
+        }
+        
+        .enemy-title {
+            color: #0ff;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        .enemy-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        
+        #pauseScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            text-align: center;
+            z-index: 40;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        
+        #pauseScreen h2 {
+            font-size: 48px;
+            margin: 0 0 30px 0;
+            color: #0ff;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            font-weight: 700;
+        }
+        
+        .pause-btn {
+            background: linear-gradient(135deg, #0ff, #088);
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            color: #000;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
+            display: block;
+            width: 250px;
+        }
+        
+        .pause-btn:hover {
+            background: linear-gradient(135deg, #fff, #0ff);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(0, 255, 255, 0.6);
+        }
+        
+        #shopScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            text-align: center;
+            z-index: 45;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #ffcc00;
+            box-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
+            backdrop-filter: blur(10px);
+            display: none;
+        }
+        
+        #shopScreen h2 {
+            font-size: 48px;
+            margin: 0 0 30px 0;
+            color: #ffcc00;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
+            font-weight: 700;
+        }
+        
+        .shop-item {
+            background: rgba(255, 204, 0, 0.1);
+            border: 1px solid #ffcc00;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: left;
+        }
+        
+        .shop-item h3 {
+            color: #ffcc00;
+            margin: 0 0 10px 0;
+            font-size: 20px;
+        }
+        
+        .shop-item p {
+            color: #ccc;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .shop-btn {
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            color: #000;
+            box-shadow: 0 2px 10px rgba(255, 204, 0, 0.3);
+        }
+        
+        .shop-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #fff, #ffcc00);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.5);
+        }
+        
+        .shop-btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+            opacity: 0.5;
+            transform: none;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #ff3333, #cc0000);
+            color: #fff;
+            margin-top: 20px;
+        }
+        
+        .back-btn:hover {
+            background: linear-gradient(135deg, #ff6666, #ff3333);
         }
         
         #gameOver {
@@ -86,36 +293,46 @@
             text-align: center;
             display: none;
             z-index: 20;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #ff3333;
+            box-shadow: 0 0 30px rgba(255, 51, 51, 0.5);
+            backdrop-filter: blur(10px);
         }
         
         #gameOver h2 {
             font-size: 48px;
-            margin: 0;
+            margin: 0 0 20px 0;
             color: #ff3333;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.9);
+            text-shadow: 0 0 20px rgba(255, 51, 51, 0.8);
+            font-weight: 700;
         }
         
         #gameOver p {
             font-size: 24px;
-            margin: 10px 0;
+            margin: 15px 0;
+            color: #ccc;
         }
         
         #restartBtn {
-            background: #0ff;
+            background: linear-gradient(135deg, #ff3333, #cc0000);
             border: none;
-            padding: 15px 30px;
+            padding: 15px 40px;
             font-size: 20px;
-            font-family: 'Courier New', monospace;
+            font-weight: 600;
             cursor: pointer;
             margin-top: 20px;
-            border-radius: 5px;
-            transition: all 0.3s;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(255, 51, 51, 0.4);
         }
         
         #restartBtn:hover {
-            background: #fff;
-            color: #000;
-            transform: scale(1.1);
+            background: linear-gradient(135deg, #ff6666, #ff3333);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(255, 51, 51, 0.6);
         }
         
         #startScreen {
@@ -126,75 +343,138 @@
             color: #fff;
             text-align: center;
             z-index: 30;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 40px;
+            border-radius: 20px;
+            border: 2px solid #0ff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            backdrop-filter: blur(10px);
         }
         
         #startScreen h1 {
             font-size: 48px;
-            margin: 0;
+            margin: 0 0 30px 0;
             color: #0ff;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.9);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            font-weight: 700;
         }
         
         #startScreen p {
             font-size: 18px;
-            margin: 20px 0;
+            margin: 15px 0;
             color: #ccc;
         }
         
         #startBtn {
-            background: #0ff;
+            background: linear-gradient(135deg, #0ff, #088);
             border: none;
-            padding: 15px 30px;
+            padding: 15px 40px;
             font-size: 20px;
-            font-family: 'Courier New', monospace;
+            font-weight: 600;
             cursor: pointer;
-            margin-top: 20px;
-            border-radius: 5px;
-            transition: all 0.3s;
+            margin-top: 30px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            color: #000;
+            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
         }
         
         #startBtn:hover {
-            background: #fff;
-            color: #000;
-            transform: scale(1.1);
+            background: linear-gradient(135deg, #fff, #0ff);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(0, 255, 255, 0.6);
+        }
+        
+        .controls-info {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #0ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .enemy-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-left: 8px;
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
-        <div id="ui">
-            <div>Score: <span id="score">0</span></div>
-            <div>Lives: <span id="lives">3</span></div>
-            <div>Wave: <span id="wave">1</span></div>
-            <div>Range: <span id="range">100</span>px</div>
+        <div id="hud">
+            <div class="hud-panel hud-left">
+                <div class="hud-item">
+                    <span class="hud-label">SCORE:</span>
+                    <span class="hud-value" id="score">0</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">LIVES:</span>
+                    <span class="hud-value" id="lives">3</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">WAVE:</span>
+                    <span class="hud-value" id="wave">1</span>
+                </div>
+                <div class="hud-item">
+                    <span class="hud-label">RANGE:</span>
+                    <span class="hud-value" id="range">100px</span>
+                </div>
+            </div>
+            
+            <div class="hud-panel hud-right">
+                <div class="enemy-info">
+                    <div class="enemy-title">ENEMY TYPES</div>
+                    <div class="enemy-item">
+                        <span>Basic (10 pts)</span>
+                        <div class="enemy-color" style="background: #ff3333;"></div>
+                    </div>
+                    <div class="enemy-item">
+                        <span>Fast (20 pts)</span>
+                        <div class="enemy-color" style="background: #ff9933;"></div>
+                    </div>
+                    <div class="enemy-item">
+                        <span>Heavy (50 pts)</span>
+                        <div class="enemy-color" style="background: #9933ff;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div id="upgradePanel">
-            <div style="font-weight: bold; margin-bottom: 10px;">UPGRADES:</div>
-            <div>Range Level: <span id="rangeLevel">1</span></div>
-            <button class="upgrade-btn" id="upgradeRangeBtn">Upgrade Range (50 pts)</button>
-            <div style="margin-top: 10px; font-size: 12px; color: #ccc;">ENEMY TYPES:</div>
-            <div style="font-size: 11px; color: #ff3333;">🔺 Basic: 10 pts</div>
-            <div style="font-size: 11px; color: #ff9933;">♦ Fast: 20 pts</div>
-            <div style="font-size: 11px; color: #9933ff;">▬ Heavy: 50 pts</div>
+        <div id="pauseScreen">
+            <h2>PAUSED</h2>
+            <button class="pause-btn" id="resumeBtn">Resume Game</button>
+            <button class="pause-btn" id="shopBtn">Shop</button>
+            <button class="pause-btn" id="mainMenuBtn">Main Menu</button>
         </div>
+        
+        <div id="shopScreen">
+            <h2>SHOP</h2>
+            <div class="shop-item">
+                <h3>Shooting Range Upgrade</h3>
+                <p>Current Level: <span id="shopRangeLevel">1</span></p>
+                <p>Current Range: <span id="shopRange">100px</span></p>
+                <p>Increase your shooting range by 50px</p>
+                <button class="shop-btn" id="shopUpgradeRangeBtn">Upgrade (50 pts)</button>
+            </div>
+            <button class="shop-btn back-btn" id="backToPauseBtn">Back to Pause</button>
+        </div>
+        
         <div id="startScreen">
             <h1>SPACE SHOOTER</h1>
-            <p>Move with WASD</p>
-            <p>Move MOUSE to aim</p>
-            <p>Click to shoot (bullets stop at range limit)</p>
-            <p>Upgrade your range with points!</p>
-            <div style="margin: 20px 0; padding: 15px; background: rgba(0,255,255,0.1); border: 1px solid #0ff; border-radius: 5px;">
-                <p style="margin: 5px 0; color: #0ff;">🔺 Basic: Red triangle - 10 points</p>
-                <p style="margin: 5px 0; color: #ff9933;">♦ Fast: Orange diamond - 20 points</p>
-                <p style="margin: 5px 0; color: #9933ff;">▬ Heavy: Purple square - 50 points (3 hits)</p>
-                <p style="margin: 10px 0 5px 0; color: #ffff00;">💡 Upgrade your shooting range to hit more enemies!</p>
+            <div class="controls-info">
+                <p>🎮 Move with WASD</p>
+                <p>🖱️ Move mouse to aim</p>
+                <p>🔫 Click to shoot (bullets stop at range limit)</p>
+                <p>⬆️ Upgrade your range with points!</p>
+                <p>⏸️ Press ESC to pause</p>
+            </div>
+            <div class="controls-info">
+                <p style="color: #ff3333;">🔺 Basic: Red triangle - 10 points</p>
+                <p style="color: #ff9933;">♦ Fast: Orange diamond - 20 points</p>
+                <p style="color: #9933ff;">▬ Heavy: Purple square - 50 points (3 hits)</p>
+                <p style="color: #ffff00;">💡 Upgrade your shooting range to hit more enemies!</p>
             </div>
             <button id="startBtn">START GAME</button>
         </div>
@@ -210,8 +490,35 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         
+        // Responsive canvas sizing
+        function resizeCanvas() {
+            const container = document.getElementById('gameContainer');
+            const maxWidth = container.clientWidth - 40; // Account for padding
+            const maxHeight = container.clientHeight - 40;
+            
+            // Maintain aspect ratio (4:3)
+            const aspectRatio = 4 / 3;
+            let width = maxWidth;
+            let height = width / aspectRatio;
+            
+            if (height > maxHeight) {
+                height = maxHeight;
+                width = height * aspectRatio;
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        
         // Game state
         let gameRunning = false;
+        let gamePaused = false;
         let score = 0;
         let lives = 3;
         let wave = 1;
@@ -223,7 +530,7 @@
         let shootingRange = 100;
         let rangeUpgradeCost = 50;
         
-        // Mouse position
+        // Mouse position (relative to canvas)
         let mouseX = canvas.width / 2;
         let mouseY = canvas.height / 2;
         
@@ -269,14 +576,6 @@
             ctx.arc(player.x + player.width / 2, player.y + player.height / 2, shootingRange, 0, Math.PI * 2);
             ctx.stroke();
             ctx.setLineDash([]);
-            
-            // Draw line to mouse cursor
-            ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(player.x + player.width / 2, player.y + player.height / 2);
-            ctx.lineTo(mouseX, mouseY);
-            ctx.stroke();
         }
         
         // Draw aiming line
@@ -302,8 +601,15 @@
             ctx.setLineDash([]);
         }
         function drawPlayer() {
-            // Main body
-            ctx.fillStyle = '#0ff';
+            ctx.save();
+            
+            // Main body with gradient
+            const gradient = ctx.createLinearGradient(player.x, player.y, player.x, player.y + player.height);
+            gradient.addColorStop(0, '#66ffff');
+            gradient.addColorStop(0.5, '#00ffff');
+            gradient.addColorStop(1, '#0088cc');
+            ctx.fillStyle = gradient;
+            
             ctx.beginPath();
             ctx.moveTo(player.x + player.width / 2, player.y);
             ctx.lineTo(player.x, player.y + player.height);
@@ -312,22 +618,38 @@
             ctx.closePath();
             ctx.fill();
             
-            // Cockpit
-            ctx.fillStyle = '#003366';
+            // Add border
+            ctx.strokeStyle = '#aaffff';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Cockpit with gradient
+            const cockpitGradient = ctx.createRadialGradient(
+                player.x + player.width / 2, player.y + 15, 0,
+                player.x + player.width / 2, player.y + 15, 5
+            );
+            cockpitGradient.addColorStop(0, '#0066aa');
+            cockpitGradient.addColorStop(1, '#003366');
+            ctx.fillStyle = cockpitGradient;
+            
             ctx.beginPath();
             ctx.arc(player.x + player.width / 2, player.y + 15, 5, 0, Math.PI * 2);
             ctx.fill();
             
-            // Engine glow
-            ctx.fillStyle = '#ff6600';
-            ctx.fillRect(player.x + 10, player.y + player.height, 5, 5);
-            ctx.fillRect(player.x + player.width - 15, player.y + player.height, 5, 5);
+            // Add cockpit border
+            ctx.strokeStyle = '#0088ff';
+            ctx.lineWidth = 1;
+            ctx.stroke();
             
-            // Player label
-            ctx.fillStyle = '#fff';
+            // Player label with shadow
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+            ctx.shadowBlur = 4;
+            ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 12px Courier New';
             ctx.textAlign = 'center';
             ctx.fillText('P', player.x + player.width / 2, player.y + player.height / 2 + 3);
+            
+            ctx.restore();
         }
         
         // Create bullet
@@ -359,17 +681,23 @@
         // Draw bullets
         function drawBullets() {
             bullets.forEach(bullet => {
-                // Bullet glow effect
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = '#ffff00';
+                // Bullet with gradient
+                const gradient = ctx.createRadialGradient(
+                    bullet.x + bullet.width / 2, bullet.y + bullet.height / 2, 0,
+                    bullet.x + bullet.width / 2, bullet.y + bullet.height / 2, bullet.width
+                );
+                gradient.addColorStop(0, '#ffffff');
+                gradient.addColorStop(0.5, '#ffff00');
+                gradient.addColorStop(1, '#ff9900');
                 
-                ctx.fillStyle = '#ffff00';
+                ctx.fillStyle = gradient;
                 ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
                 
-                // Bullet trail
-                ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
-                ctx.fillRect(bullet.x, bullet.y + bullet.height, bullet.width, bullet.height);
-                
+                // Add glow effect
+                ctx.shadowColor = '#ffff00';
+                ctx.shadowBlur = 8;
+                ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
+                ctx.fillRect(bullet.x - 2, bullet.y - 2, bullet.width + 4, bullet.height + 4);
                 ctx.shadowBlur = 0;
             });
         }
@@ -443,19 +771,46 @@
         // Draw enemies
         function drawEnemies() {
             enemies.forEach(enemy => {
-                ctx.fillStyle = enemy.color;
+                ctx.save();
                 
-                // Draw different shapes for different enemy types
+                // Add rotation animation for visual interest
+                const time = Date.now() * 0.001;
+                const rotation = time * (enemy.type === 'fast' ? 3 : 1);
+                
+                ctx.translate(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
+                ctx.rotate(rotation);
+                ctx.translate(-(enemy.x + enemy.width / 2), -(enemy.y + enemy.height / 2));
+                
+                // Draw different shapes with gradients for different enemy types
                 if (enemy.type === 'basic') {
-                    // Triangle for basic enemies
+                    // Triangle with gradient
+                    const gradient = ctx.createLinearGradient(enemy.x, enemy.y, enemy.x, enemy.y + enemy.height);
+                    gradient.addColorStop(0, '#ff6666');
+                    gradient.addColorStop(1, '#ff3333');
+                    ctx.fillStyle = gradient;
+                    
                     ctx.beginPath();
                     ctx.moveTo(enemy.x + enemy.width / 2, enemy.y + enemy.height);
                     ctx.lineTo(enemy.x, enemy.y);
                     ctx.lineTo(enemy.x + enemy.width, enemy.y);
                     ctx.closePath();
                     ctx.fill();
+                    
+                    // Add border
+                    ctx.strokeStyle = '#ffaaaa';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
                 } else if (enemy.type === 'fast') {
-                    // Diamond for fast enemies
+                    // Diamond with gradient
+                    const gradient = ctx.createRadialGradient(
+                        enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, 0,
+                        enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, enemy.width / 2
+                    );
+                    gradient.addColorStop(0, '#ffcc33');
+                    gradient.addColorStop(1, '#ff9933');
+                    ctx.fillStyle = gradient;
+                    
                     ctx.beginPath();
                     ctx.moveTo(enemy.x + enemy.width / 2, enemy.y);
                     ctx.lineTo(enemy.x + enemy.width, enemy.y + enemy.height / 2);
@@ -463,28 +818,71 @@
                     ctx.lineTo(enemy.x, enemy.y + enemy.height / 2);
                     ctx.closePath();
                     ctx.fill();
-                } else if (enemy.type === 'heavy') {
-                    // Rectangle with border for heavy enemies
-                    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-                    ctx.strokeStyle = '#fff';
+                    
+                    // Add border
+                    ctx.strokeStyle = '#ffdd66';
                     ctx.lineWidth = 2;
+                    ctx.stroke();
+                    
+                } else if (enemy.type === 'heavy') {
+                    // Rectangle with gradient and border
+                    const gradient = ctx.createLinearGradient(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
+                    gradient.addColorStop(0, '#cc66ff');
+                    gradient.addColorStop(0.5, '#9933ff');
+                    gradient.addColorStop(1, '#6633cc');
+                    ctx.fillStyle = gradient;
+                    
+                    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                    
+                    // Add border
+                    ctx.strokeStyle = '#cc99ff';
+                    ctx.lineWidth = 3;
                     ctx.strokeRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                    
+                    // Add corner details
+                    ctx.fillStyle = '#cc99ff';
+                    ctx.fillRect(enemy.x + 2, enemy.y + 2, 8, 8);
+                    ctx.fillRect(enemy.x + enemy.width - 10, enemy.y + 2, 8, 8);
+                    ctx.fillRect(enemy.x + 2, enemy.y + enemy.height - 10, 8, 8);
+                    ctx.fillRect(enemy.x + enemy.width - 10, enemy.y + enemy.height - 10, 8, 8);
                 }
                 
                 // Draw health bar for heavy enemies
                 if (enemy.type === 'heavy' && enemy.health > 1) {
-                    ctx.fillStyle = '#00ff00';
-                    ctx.fillRect(enemy.x, enemy.y - 10, enemy.width * (enemy.health / 3), 3);
-                    ctx.fillStyle = '#ff0000';
-                    ctx.fillRect(enemy.x + enemy.width * (enemy.health / 3), enemy.y - 10, enemy.width * (1 - enemy.health / 3), 3);
+                    ctx.restore(); // Restore for health bar positioning
+                    
+                    // Health bar background
+                    ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                    ctx.fillRect(enemy.x, enemy.y - 12, enemy.width, 4);
+                    
+                    // Health bar fill
+                    const healthPercent = enemy.health / 3;
+                    const healthGradient = ctx.createLinearGradient(enemy.x, enemy.y - 12, enemy.x + enemy.width, enemy.y - 12);
+                    healthGradient.addColorStop(0, '#ff3333');
+                    healthGradient.addColorStop(healthPercent, '#ffaa00');
+                    healthGradient.addColorStop(Math.min(healthPercent + 0.1, 1), '#00ff00');
+                    
+                    ctx.fillStyle = healthGradient;
+                    ctx.fillRect(enemy.x, enemy.y - 12, enemy.width * healthPercent, 4);
+                    
+                    // Health bar border
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(enemy.x, enemy.y - 12, enemy.width, 4);
+                } else {
+                    ctx.restore();
                 }
                 
-                // Draw enemy type label
-                ctx.fillStyle = '#fff';
-                ctx.font = '10px Courier New';
+                // Draw enemy type label with shadow
+                ctx.save();
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                ctx.shadowBlur = 4;
+                ctx.fillStyle = '#ffffff';
+                ctx.font = 'bold 10px Courier New';
                 ctx.textAlign = 'center';
                 let label = enemy.type.charAt(0).toUpperCase();
                 ctx.fillText(label, enemy.x + enemy.width / 2, enemy.y + enemy.height / 2 + 3);
+                ctx.restore();
             });
         }
         
@@ -504,37 +902,105 @@
         
         // Create particle explosion
         function createExplosion(x, y, color) {
-            for (let i = 0; i < 15; i++) {
+            for (let i = 0; i < 20; i++) {
+                const angle = (Math.PI * 2 * i) / 20;
+                const speed = Math.random() * 6 + 2;
+                const size = Math.random() * 4 + 1;
+                
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed,
+                    size: size,
+                    life: 40,
+                    maxLife: 40,
+                    color: color,
+                    type: 'explosion'
+                });
+            }
+            
+            // Add sparkles
+            for (let i = 0; i < 10; i++) {
                 particles.push({
                     x: x,
                     y: y,
                     vx: (Math.random() - 0.5) * 8,
                     vy: (Math.random() - 0.5) * 8,
-                    size: Math.random() * 3 + 1,
+                    size: Math.random() * 2 + 1,
                     life: 30,
-                    color: color
+                    maxLife: 30,
+                    color: '#ffffff',
+                    type: 'sparkle'
                 });
             }
         }
         
-        // Draw particles
+        // Draw enhanced particles
         function drawParticles() {
             particles.forEach(particle => {
-                ctx.fillStyle = particle.color;
-                ctx.globalAlpha = particle.life / 30;
-                ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
+                const alpha = particle.life / particle.maxLife;
+                
+                if (particle.type === 'sparkle') {
+                    // Sparkle effect
+                    ctx.save();
+                    ctx.shadowColor = particle.color;
+                    ctx.shadowBlur = 10;
+                    ctx.fillStyle = particle.color;
+                    ctx.globalAlpha = alpha;
+                    
+                    // Draw star shape
+                    ctx.beginPath();
+                    for (let i = 0; i < 5; i++) {
+                        const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
+                        const x = particle.x + Math.cos(angle) * particle.size;
+                        const y = particle.y + Math.sin(angle) * particle.size;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                        
+                        const innerAngle = angle + Math.PI / 5;
+                        const innerX = particle.x + Math.cos(innerAngle) * (particle.size * 0.5);
+                        const innerY = particle.y + Math.sin(innerAngle) * (particle.size * 0.5);
+                        ctx.lineTo(innerX, innerY);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.restore();
+                } else {
+                    // Regular explosion particle
+                    const gradient = ctx.createRadialGradient(
+                        particle.x, particle.y, 0,
+                        particle.x, particle.y, particle.size
+                    );
+                    gradient.addColorStop(0, particle.color);
+                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.globalAlpha = alpha;
+                    ctx.fillRect(particle.x - particle.size, particle.y - particle.size, particle.size * 2, particle.size * 2);
+                }
+                
                 ctx.globalAlpha = 1;
             });
         }
         
-        // Update particles
+        // Update enhanced particles
         function updateParticles() {
             particles = particles.filter(particle => {
                 particle.x += particle.vx;
                 particle.y += particle.vy;
                 particle.life--;
+                
+                // Add physics
                 particle.vx *= 0.98;
                 particle.vy *= 0.98;
+                particle.vy += 0.1; // Gravity
+                
+                // Sparkles twinkle
+                if (particle.type === 'sparkle') {
+                    particle.size = Math.sin(particle.life * 0.3) * 2 + 2;
+                }
+                
                 return particle.life > 0;
             });
         }
@@ -608,17 +1074,58 @@
             document.getElementById('score').textContent = score;
             document.getElementById('lives').textContent = lives;
             document.getElementById('wave').textContent = wave;
-            document.getElementById('range').textContent = shootingRange;
-            document.getElementById('rangeLevel').textContent = rangeLevel;
+            document.getElementById('range').textContent = shootingRange + 'px';
             
-            // Update upgrade button
-            const upgradeBtn = document.getElementById('upgradeRangeBtn');
-            upgradeBtn.textContent = `Upgrade Range (${rangeUpgradeCost} pts)`;
-            upgradeBtn.disabled = score < rangeUpgradeCost;
+            // Update shop UI
+            document.getElementById('shopRangeLevel').textContent = rangeLevel;
+            document.getElementById('shopRange').textContent = shootingRange + 'px';
+            
+            // Update shop button
+            const shopUpgradeBtn = document.getElementById('shopUpgradeRangeBtn');
+            shopUpgradeBtn.textContent = `Upgrade (${rangeUpgradeCost} pts)`;
+            shopUpgradeBtn.disabled = score < rangeUpgradeCost;
         }
         
-        // Upgrade shooting range
-        function upgradeRange() {
+        // Pause game
+        function pauseGame() {
+            if (!gameRunning || gamePaused) return;
+            gamePaused = true;
+            document.getElementById('pauseScreen').style.display = 'block';
+        }
+        
+        // Resume game
+        function resumeGame() {
+            if (!gameRunning || !gamePaused) return;
+            gamePaused = false;
+            document.getElementById('pauseScreen').style.display = 'none';
+            document.getElementById('shopScreen').style.display = 'none';
+            gameLoop();
+        }
+        
+        // Open shop
+        function openShop() {
+            document.getElementById('pauseScreen').style.display = 'none';
+            document.getElementById('shopScreen').style.display = 'block';
+            updateUI();
+        }
+        
+        // Back to pause menu
+        function backToPause() {
+            document.getElementById('shopScreen').style.display = 'none';
+            document.getElementById('pauseScreen').style.display = 'block';
+        }
+        
+        // Return to main menu
+        function returnToMainMenu() {
+            gameRunning = false;
+            gamePaused = false;
+            document.getElementById('pauseScreen').style.display = 'none';
+            document.getElementById('shopScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        }
+        
+        // Upgrade shooting range (from shop)
+        function upgradeRangeFromShop() {
             if (score >= rangeUpgradeCost) {
                 score -= rangeUpgradeCost;
                 rangeLevel++;
@@ -671,10 +1178,10 @@
         
         // Game loop
         function gameLoop() {
-            if (!gameRunning) return;
+            if (!gameRunning || gamePaused) return;
             
-            // Clear canvas
-            ctx.fillStyle = 'rgba(0, 4, 40, 0.3)';
+            // Clear canvas completely (no trail effect)
+            ctx.fillStyle = 'rgba(0, 4, 40, 1)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
             // Update and draw everything
@@ -688,7 +1195,6 @@
             spawnEnemies();
             checkCollisions();
             
-            drawRangeIndicator();
             drawAimingLine();
             drawPlayer();
             drawBullets();
@@ -713,6 +1219,7 @@
             enemies = [];
             particles = [];
             
+            // Reset player position based on canvas size
             player.x = canvas.width / 2 - 20;
             player.y = canvas.height - 80;
             
@@ -735,6 +1242,13 @@
         // Event listeners
         document.addEventListener('keydown', (e) => {
             keys[e.key] = true;
+            
+            // Pause with ESC
+            if (e.key === 'Escape' && gameRunning && !gamePaused) {
+                pauseGame();
+            } else if (e.key === 'Escape' && gamePaused) {
+                resumeGame();
+            }
         });
         
         document.addEventListener('keyup', (e) => {
@@ -744,8 +1258,11 @@
         // Mouse event listeners
         canvas.addEventListener('mousemove', (e) => {
             const rect = canvas.getBoundingClientRect();
-            mouseX = e.clientX - rect.left;
-            mouseY = e.clientY - rect.top;
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            mouseX = (e.clientX - rect.left) * scaleX;
+            mouseY = (e.clientY - rect.top) * scaleY;
         });
         
         canvas.addEventListener('mousedown', (e) => {
@@ -762,7 +1279,15 @@
         
         document.getElementById('startBtn').addEventListener('click', startGame);
         document.getElementById('restartBtn').addEventListener('click', startGame);
-        document.getElementById('upgradeRangeBtn').addEventListener('click', upgradeRange);
+        
+        // Pause menu buttons
+        document.getElementById('resumeBtn').addEventListener('click', resumeGame);
+        document.getElementById('shopBtn').addEventListener('click', openShop);
+        document.getElementById('mainMenuBtn').addEventListener('click', returnToMainMenu);
+        
+        // Shop buttons
+        document.getElementById('shopUpgradeRangeBtn').addEventListener('click', upgradeRangeFromShop);
+        document.getElementById('backToPauseBtn').addEventListener('click', backToPause);
         
         // Initialize
         initStars();
