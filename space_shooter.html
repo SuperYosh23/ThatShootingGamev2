@@ -637,6 +637,7 @@
                     maxDistance: shootingRange
                 });
                 player.shootCooldown = 6;
+                playSound('shoot');
             }
         }
         
@@ -1122,6 +1123,7 @@
                             enemies.splice(enemyIndex, 1);
                             score += enemy.points;
                             enemiesDestroyed++;
+                            playSound('enemyHit');
                         }
                     }
                 });
@@ -1136,6 +1138,7 @@
                     
                     bossBullets.splice(bulletIndex, 1);
                     health -= 10; // Boss bullets do 10 damage
+                    playSound('playerHit');
                     
                     if (health <= 0) {
                         gameOver();
@@ -1153,6 +1156,7 @@
                     createExplosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, enemy.color);
                     enemies.splice(index, 1);
                     health -= 25; // Take 25 damage per collision
+                    playSound('playerHit');
                     
                     if (health <= 0) {
                         gameOver();
@@ -1168,6 +1172,7 @@
                 rangeLevel++;
                 shootingRange += 50;
                 rangeUpgradeCost = Math.floor(rangeUpgradeCost * 1.5);
+                playSound('powerup');
             }
         }
         
@@ -1177,6 +1182,7 @@
                 score -= speedUpgradeCost;
                 speedLevel++;
                 speedUpgradeCost = Math.floor(speedUpgradeCost * 1.5);
+                playSound('powerup');
             }
         }
         
@@ -1185,6 +1191,7 @@
             if (score >= healthRestoreCost && health < maxHealth) {
                 score -= healthRestoreCost;
                 health = Math.min(health + 10, maxHealth);
+                playSound('powerup');
             }
         }
         
@@ -1391,7 +1398,7 @@
             ctx.fillStyle = '#ccc';
             ctx.font = '16px Courier New';
             ctx.fillText('Move with WASD | Mouse to aim | Click to shoot', canvas.width / 2, 150);
-            ctx.fillText('Press ESC to pause | Press / for commands', canvas.width / 2, 180);
+            ctx.fillText('Press ESC to pause', canvas.width / 2, 180);
             
             // Enemy info
             ctx.fillStyle = '#ff3333';
@@ -1755,9 +1762,12 @@
             if (gameState === 'menu') {
                 if (key === 'w' || key === 'arrowup') {
                     menuSelection = (menuSelection - 1 + 2) % 2;
+                    playSound('menuSelect');
                 } else if (key === 's' || key === 'arrowdown') {
                     menuSelection = (menuSelection + 1) % 2;
+                    playSound('menuSelect');
                 } else if (key === 'enter') {
+                    playSound('uiTap');
                     if (menuSelection === 0) {
                         startGame();
                     } else if (menuSelection === 1) {
@@ -1771,9 +1781,12 @@
             if (gameState === 'paused') {
                 if (key === 'w' || key === 'arrowup') {
                     pauseSelection = (pauseSelection - 1 + 3) % 3;
+                    playSound('menuSelect');
                 } else if (key === 's' || key === 'arrowdown') {
                     pauseSelection = (pauseSelection + 1) % 3;
+                    playSound('menuSelect');
                 } else if (key === 'enter') {
+                    playSound('uiTap');
                     if (pauseSelection === 0) {
                         gameState = 'playing';
                     } else if (pauseSelection === 1) {
@@ -1791,9 +1804,12 @@
             if (gameState === 'shop') {
                 if (key === 'w' || key === 'arrowup') {
                     shopSelection = (shopSelection - 1 + 4) % 4;
+                    playSound('menuSelect');
                 } else if (key === 's' || key === 'arrowdown') {
                     shopSelection = (shopSelection + 1) % 4;
+                    playSound('menuSelect');
                 } else if (key === 'enter') {
+                    playSound('uiTap');
                     if (shopSelection === 0) {
                         upgradeRangeFromShop();
                     } else if (shopSelection === 1) {
@@ -1811,8 +1827,10 @@
             // Handle game over screen
             if (gameState === 'gameOver') {
                 if (key === 'enter') {
+                    playSound('uiTap');
                     startGame();
                 } else if (key === 'escape') {
+                    playSound('uiTap');
                     gameState = 'menu';
                     menuSelection = 0;
                 }
@@ -1832,7 +1850,7 @@
                 
                 // Handle dev console commands
                 if (e.key === '/') {
-                    const command = prompt('Enter command (/wave, /speed, /kill, /health, /points):');
+                    const command = prompt('Enter command (/wave, /speed, /kill, /health, /points, /range):');
                     if (command) {
                         handleDevCommand(command);
                     }
@@ -1883,8 +1901,14 @@
                         console.log(`Points set to ${score}`);
                     }
                     break;
+                case '/range':
+                    if (!isNaN(value)) {
+                        shootingRange = Math.max(50, value);
+                        console.log(`Shooting range set to ${shootingRange}px`);
+                    }
+                    break;
                 default:
-                    console.log('Unknown command. Available: /wave, /speed, /kill, /health, /points');
+                    console.log('Unknown command. Available: /wave, /speed, /kill, /health, /points, /range');
             }
         }
         
@@ -1987,11 +2011,13 @@
                 // Check START GAME button (y: 300, width: 300, height: 50)
                 if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
                     clickY >= 275 && clickY <= 325) {
+                    playSound('uiTap');
                     startGame();
                 }
                 // Check ENDLESS MODE button (y: 360, width: 300, height: 50)
                 else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
                          clickY >= 335 && clickY <= 385) {
+                    playSound('uiTap');
                     startEndlessMode();
                 }
             }
@@ -2007,17 +2033,20 @@
                 // Check RESUME button (y: 300, width: 300, height: 50)
                 if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
                     clickY >= 275 && clickY <= 325) {
+                    playSound('uiTap');
                     gameState = 'playing';
                 }
                 // Check SHOP button (y: 360, width: 300, height: 50)
                 else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
                          clickY >= 335 && clickY <= 385) {
+                    playSound('uiTap');
                     gameState = 'shop';
                     shopSelection = 0;
                 }
                 // Check MAIN MENU button (y: 420, width: 300, height: 50)
                 else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
                          clickY >= 395 && clickY <= 445) {
+                    playSound('uiTap');
                     gameState = 'menu';
                     menuSelection = 0;
                 }
@@ -2034,10 +2063,13 @@
                 // Check shop items (x: 100-700, y: 180-420)
                 if (clickX >= 100 && clickX <= canvas.width - 100) {
                     if (clickY >= 150 && clickY <= 210) {
+                        playSound('uiTap');
                         upgradeRangeFromShop();
                     } else if (clickY >= 230 && clickY <= 290) {
+                        playSound('uiTap');
                         upgradeSpeedFromShop();
                     } else if (clickY >= 310 && clickY <= 370) {
+                        playSound('uiTap');
                         restoreHealthFromShop();
                     }
                 }
@@ -2046,6 +2078,7 @@
                 const backY = canvas.height - 100;
                 if (clickX >= canvas.width / 2 - 100 && clickX <= canvas.width / 2 + 100 &&
                     clickY >= backY - 25 && clickY <= backY + 25) {
+                    playSound('uiTap');
                     gameState = 'paused';
                     pauseSelection = 0;
                 }
@@ -2062,6 +2095,7 @@
                 // Check PLAY AGAIN button (y: 320, width: 300, height: 60)
                 if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
                     clickY >= 320 && clickY <= 380) {
+                    playSound('uiTap');
                     startGame();
                 }
             }
@@ -2085,6 +2119,148 @@
         initStars();
         gameState = 'menu';
         gameLoop();
+        
+        // Sound System - Retro 8-bit sounds
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            const currentTime = audioContext.currentTime;
+            
+            switch(type) {
+                case 'shoot':
+                    // Pew sound - quick descending tone
+                    oscillator.frequency.setValueAtTime(800, currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(400, currentTime + 0.1);
+                    gainNode.gain.setValueAtTime(0.3, currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.1);
+                    oscillator.start(currentTime);
+                    oscillator.stop(currentTime + 0.1);
+                    break;
+                    
+                case 'enemyHit':
+                    // Explosion sound - noise burst
+                    const bufferSize = audioContext.sampleRate * 0.2;
+                    const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                    const data = buffer.getChannelData(0);
+                    
+                    for (let i = 0; i < bufferSize; i++) {
+                        data[i] = (Math.random() - 0.5) * 0.5 * Math.exp(-i / (bufferSize * 0.1));
+                    }
+                    
+                    const noise = audioContext.createBufferSource();
+                    noise.buffer = buffer;
+                    
+                    const noiseGain = audioContext.createGain();
+                    noise.connect(noiseGain);
+                    noiseGain.connect(audioContext.destination);
+                    
+                    noiseGain.gain.setValueAtTime(0.4, currentTime);
+                    noiseGain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.2);
+                    
+                    noise.start(currentTime);
+                    break;
+                    
+                case 'playerHit':
+                    // Hurt sound - low frequency buzz
+                    oscillator.type = 'sawtooth';
+                    oscillator.frequency.setValueAtTime(100, currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(50, currentTime + 0.3);
+                    gainNode.gain.setValueAtTime(0.4, currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.3);
+                    oscillator.start(currentTime);
+                    oscillator.stop(currentTime + 0.3);
+                    break;
+                    
+                case 'powerup':
+                    // Power-up sound - ascending arpeggio
+                    oscillator.type = 'square';
+                    const notes = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C
+                    notes.forEach((freq, i) => {
+                        oscillator.frequency.setValueAtTime(freq, currentTime + i * 0.1);
+                    });
+                    gainNode.gain.setValueAtTime(0.2, currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.4);
+                    oscillator.start(currentTime);
+                    oscillator.stop(currentTime + 0.4);
+                    break;
+                    
+                case 'menuSelect':
+                    // Menu navigation sound - short beep
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(600, currentTime);
+                    gainNode.gain.setValueAtTime(0.2, currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.05);
+                    oscillator.start(currentTime);
+                    oscillator.stop(currentTime + 0.05);
+                    break;
+                    
+                case 'menuConfirm':
+                    // Menu confirm sound - longer beep
+                    oscillator.type = 'square';
+                    oscillator.frequency.setValueAtTime(800, currentTime);
+                    oscillator.frequency.exponentialRampToValueAtTime(400, currentTime + 0.15);
+                    gainNode.gain.setValueAtTime(0.3, currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.15);
+                    oscillator.start(currentTime);
+                    oscillator.stop(currentTime + 0.15);
+                    break;
+                    
+                case 'uiTap':
+                    // Satisfying keyboard-like tap sound
+                    oscillator.type = 'sine';
+                    
+                    // Quick attack and decay for tap feel
+                    gainNode.gain.setValueAtTime(0, currentTime);
+                    gainNode.gain.linearRampToValueAtTime(0.4, currentTime + 0.001); // Quick attack
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.05); // Quick decay
+                    
+                    // Multiple harmonics for rich tap sound
+                    const fundamental = 1200; // Higher frequency for tap
+                    const harmonics = [1, 2, 3]; // Fundamental and harmonics
+                    
+                    harmonics.forEach((harmonic, i) => {
+                        const osc = audioContext.createOscillator();
+                        const harmGain = audioContext.createGain();
+                        
+                        osc.connect(harmGain);
+                        harmGain.connect(audioContext.destination);
+                        
+                        osc.frequency.setValueAtTime(fundamental * harmonic, currentTime);
+                        osc.type = i === 0 ? 'sine' : 'triangle'; // Mix waveforms
+                        
+                        const harmVolume = 0.4 / (i + 1); // Decrease volume for higher harmonics
+                        harmGain.gain.setValueAtTime(0, currentTime);
+                        harmGain.gain.linearRampToValueAtTime(harmVolume, currentTime + 0.001);
+                        harmGain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.05);
+                        
+                        osc.start(currentTime);
+                        osc.stop(currentTime + 0.05);
+                    });
+                    
+                    // Add a subtle click at the beginning
+                    const clickOsc = audioContext.createOscillator();
+                    const clickGain = audioContext.createGain();
+                    
+                    clickOsc.connect(clickGain);
+                    clickGain.connect(audioContext.destination);
+                    
+                    clickOsc.type = 'square';
+                    clickOsc.frequency.setValueAtTime(3000, currentTime);
+                    
+                    clickGain.gain.setValueAtTime(0.2, currentTime);
+                    clickGain.gain.exponentialRampToValueAtTime(0.01, currentTime + 0.002);
+                    
+                    clickOsc.start(currentTime);
+                    clickOsc.stop(currentTime + 0.002);
+                    break;
+            }
+        }
     </script>
 </body>
 </html>
