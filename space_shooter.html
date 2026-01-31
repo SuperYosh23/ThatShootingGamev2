@@ -445,6 +445,7 @@
         let menuSelection = 0; // 0 = Start Game, 1 = Endless Mode
         let pauseSelection = 0; // 0 = Resume, 1 = Shop, 2 = Main Menu
         let shopSelection = 0; // 0 = Range, 1 = Speed, 2 = Health, 3 = Back
+        let gameOverSelection = 0; // 0 = Play Again, 1 = Main Menu
         let score = 0;
         let health = 100;
         let maxHealth = 100;
@@ -1388,32 +1389,95 @@
             // Draw stars
             drawStars();
             
-            // Title
+            // Draw decorative border
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(20, 20, canvas.width - 40, canvas.height - 40);
+            
+            // Inner border
+            ctx.strokeStyle = '#066';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(30, 30, canvas.width - 60, canvas.height - 60);
+            
+            // Title with glow effect
+            ctx.shadowColor = '#0ff';
+            ctx.shadowBlur = 10;
             ctx.fillStyle = '#0ff';
             ctx.font = 'bold 48px Courier New';
             ctx.textAlign = 'center';
-            ctx.fillText('THAT SHOOTING GAME v2', canvas.width / 2, 100);
+            ctx.fillText('THAT SHOOTING GAME v2', canvas.width / 2, 80);
+            ctx.shadowBlur = 0;
+            
+            // Subtitle
+            ctx.fillStyle = '#099';
+            ctx.font = '14px Courier New';
+            ctx.fillText('RETRO ARCADE EXPERIENCE', canvas.width / 2, 105);
+            
+            // Controls panel background
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.05)';
+            ctx.fillRect(canvas.width / 2 - 250, 130, 500, 80);
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(canvas.width / 2 - 250, 130, 500, 80);
             
             // Controls info
             ctx.fillStyle = '#ccc';
             ctx.font = '16px Courier New';
-            ctx.fillText('Move with WASD | Mouse to aim | Click to shoot', canvas.width / 2, 150);
-            ctx.fillText('Press ESC to pause', canvas.width / 2, 180);
+            ctx.fillText('WASD: Move | Mouse: Aim | Click: Shoot', canvas.width / 2, 155);
+            ctx.fillText('ESC: Pause | /: Commands', canvas.width / 2, 180);
+            ctx.fillText('Custom Cursor & Sound Effects Enabled', canvas.width / 2, 200);
             
-            // Enemy info
+            // Enemy showcase panel
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.fillRect(canvas.width / 2 - 200, 230, 400, 100);
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(canvas.width / 2 - 200, 230, 400, 100);
+            
+            // Enemy info with better layout
             ctx.fillStyle = '#ff3333';
-            ctx.fillText('Basic: 10 pts', canvas.width / 2 - 150, 220);
+            ctx.font = 'bold 14px Courier New';
+            ctx.fillText('▶ BASIC', canvas.width / 2 - 180, 255);
+            ctx.font = '12px Courier New';
+            ctx.fillText('10 pts', canvas.width / 2 - 180, 270);
+            
             ctx.fillStyle = '#ff9933';
-            ctx.fillText('Fast: 20 pts', canvas.width / 2, 220);
+            ctx.font = 'bold 14px Courier New';
+            ctx.fillText('▶ FAST', canvas.width / 2 - 60, 255);
+            ctx.font = '12px Courier New';
+            ctx.fillText('20 pts', canvas.width / 2 - 60, 270);
+            
             ctx.fillStyle = '#9933ff';
-            ctx.fillText('Heavy: 50 pts', canvas.width / 2 + 150, 220);
+            ctx.font = 'bold 14px Courier New';
+            ctx.fillText('▶ HEAVY', canvas.width / 2 + 60, 255);
+            ctx.font = '12px Courier New';
+            ctx.fillText('50 pts', canvas.width / 2 + 60, 270);
+            
+            // Wave indicator
+            ctx.fillStyle = '#0ff';
+            ctx.font = '12px Courier New';
+            ctx.fillText('WAVES 1-3 + BOSS + ENDLESS MODE', canvas.width / 2, 310);
+            
+            // Stats panel
+            ctx.fillStyle = 'rgba(0, 255, 255, 0.05)';
+            ctx.fillRect(canvas.width / 2 - 150, 340, 300, 60);
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(canvas.width / 2 - 150, 340, 300, 60);
+            
+            ctx.fillStyle = '#0ff';
+            ctx.font = 'bold 14px Courier New';
+            ctx.fillText('HIGH SCORE', canvas.width / 2, 360);
+            ctx.fillStyle = '#fff';
+            ctx.font = '20px Courier New';
+            ctx.fillText('0', canvas.width / 2, 385);
             
             // Menu options
             const options = ['START GAME', 'ENDLESS MODE'];
             const colors = ['#0ff', '#ff3333'];
             
             options.forEach((option, index) => {
-                const y = 300 + index * 60;
+                const y = 430 + index * 60; // Moved down to accommodate new content
                 
                 // Highlight selected option
                 if (index === menuSelection) {
@@ -1431,6 +1495,11 @@
                 ctx.fillText(option, canvas.width / 2, y + 5);
             });
             
+            // Footer info
+            ctx.fillStyle = '#066';
+            ctx.font = '10px Courier New';
+            ctx.fillText('v2.0 | Custom Cursor | Retro Sounds | Enhanced UI', canvas.width / 2, canvas.height - 30);
+            
             // Instructions
             ctx.fillStyle = '#666';
             ctx.font = '14px Courier New';
@@ -1443,49 +1512,77 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Pause title
-            ctx.fillStyle = '#0ff';
-            ctx.font = 'bold 48px Courier New';
-            ctx.textAlign = 'center';
-            ctx.fillText('PAUSED', canvas.width / 2, 150);
+            // Draw pause panel
+            const panelWidth = 500;
+            const panelHeight = 400;
+            const panelX = (canvas.width - panelWidth) / 2;
+            const panelY = (canvas.height - panelHeight) / 2;
             
-            // Enemy info
+            // Panel background with gradient effect
+            ctx.fillStyle = 'rgba(0, 4, 40, 0.9)';
+            ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
+            
+            // Panel border
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(panelX, panelY, panelWidth, panelHeight);
+            
+            // Inner border
+            ctx.strokeStyle = '#066';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(panelX + 10, panelY + 10, panelWidth - 20, panelHeight - 20);
+            
+            // Pause title with glow
+            ctx.shadowColor = '#0ff';
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = '#0ff';
+            ctx.font = 'bold 36px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('GAME PAUSED', canvas.width / 2, panelY + 60);
+            ctx.shadowBlur = 0;
+            
+            // Current game stats
             ctx.fillStyle = '#ccc';
-            ctx.font = '16px Courier New';
-            ctx.fillText('ENEMY TYPES', canvas.width / 2, 200);
-            ctx.fillStyle = '#ff3333';
-            ctx.fillText('Basic: 10 pts', canvas.width / 2 - 150, 230);
-            ctx.fillStyle = '#ff9933';
-            ctx.fillText('Fast: 20 pts', canvas.width / 2, 230);
-            ctx.fillStyle = '#9933ff';
-            ctx.fillText('Heavy: 50 pts', canvas.width / 2 + 150, 230);
+            ctx.font = '14px Courier New';
+            ctx.fillText(`WAVE: ${wave} | SCORE: ${score} | HEALTH: ${health}/${maxHealth}`, canvas.width / 2, panelY + 90);
             
             // Pause options
             const options = ['RESUME GAME', 'SHOP', 'MAIN MENU'];
+            const symbols = ['►', '■', '◄'];
             
             options.forEach((option, index) => {
-                const y = 300 + index * 60;
+                const y = panelY + 140 + index * 70;
                 
-                // Highlight selected option
+                // Option background
                 if (index === pauseSelection) {
-                    ctx.fillStyle = '#0ff';
-                    ctx.fillRect(canvas.width / 2 - 150, y - 25, 300, 50);
-                    ctx.fillStyle = '#000';
-                } else {
+                    ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+                    ctx.fillRect(panelX + 50, y - 25, panelWidth - 100, 50);
                     ctx.strokeStyle = '#0ff';
-                    ctx.strokeRect(canvas.width / 2 - 150, y - 25, 300, 50);
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(panelX + 50, y - 25, panelWidth - 100, 50);
                     ctx.fillStyle = '#0ff';
+                } else {
+                    ctx.strokeStyle = '#066';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(panelX + 50, y - 25, panelWidth - 100, 50);
+                    ctx.fillStyle = '#888';
                 }
                 
-                ctx.font = 'bold 20px Courier New';
+                // Symbol and text
+                ctx.font = '20px Courier New';
+                ctx.textAlign = 'left';
+                ctx.fillText(symbols[index], panelX + 70, y + 5);
+                
+                ctx.font = 'bold 18px Courier New';
                 ctx.textAlign = 'center';
                 ctx.fillText(option, canvas.width / 2, y + 5);
             });
             
-            // Instructions
-            ctx.fillStyle = '#666';
-            ctx.font = '14px Courier New';
-            ctx.fillText('Use W/S or UP/DOWN arrows to select, ENTER to choose', canvas.width / 2, canvas.height - 50);
+            // Footer hint
+            ctx.fillStyle = '#066';
+            ctx.font = '12px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('Press ESC to resume directly', canvas.width / 2, panelY + panelHeight - 20);
         }
         
         // Draw shop screen on canvas
@@ -1494,74 +1591,129 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Shop title
+            // Draw shop panel
+            const panelWidth = 600;
+            const panelHeight = 500;
+            const panelX = (canvas.width - panelWidth) / 2;
+            const panelY = (canvas.height - panelHeight) / 2;
+            
+            // Panel background
+            ctx.fillStyle = 'rgba(0, 4, 40, 0.95)';
+            ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
+            
+            // Panel border
+            ctx.strokeStyle = '#ffcc00';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(panelX, panelY, panelWidth, panelHeight);
+            
+            // Inner border
+            ctx.strokeStyle = '#660';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(panelX + 10, panelY + 10, panelWidth - 20, panelHeight - 20);
+            
+            // Shop title with glow
+            ctx.shadowColor = '#ffcc00';
+            ctx.shadowBlur = 15;
             ctx.fillStyle = '#ffcc00';
-            ctx.font = 'bold 48px Courier New';
+            ctx.font = 'bold 36px Courier New';
             ctx.textAlign = 'center';
-            ctx.fillText('SHOP', canvas.width / 2, 100);
+            ctx.fillText('UPGRADE SHOP', canvas.width / 2, panelY + 50);
+            ctx.shadowBlur = 0;
+            
+            // Player stats
+            ctx.fillStyle = '#ccc';
+            ctx.font = '14px Courier New';
+            ctx.fillText(`SCORE: ${score} | HEALTH: ${health}/${maxHealth}`, canvas.width / 2, panelY + 80);
             
             // Shop items
             const items = [
                 {
                     name: 'SHOOTING RANGE',
-                    desc: `Current: ${shootingRange}px | Cost: ${rangeUpgradeCost} pts`,
-                    affordable: score >= rangeUpgradeCost
+                    desc: `Current: ${shootingRange}px → ${shootingRange + 50}px`,
+                    cost: `Cost: ${rangeUpgradeCost} pts`,
+                    affordable: score >= rangeUpgradeCost,
+                    symbol: '+'
                 },
                 {
                     name: 'SPEED UPGRADE',
-                    desc: `Level: ${speedLevel} | Cost: ${speedUpgradeCost} pts`,
-                    affordable: score >= speedUpgradeCost
+                    desc: `Level: ${speedLevel} → ${speedLevel + 1}`,
+                    cost: `Cost: ${speedUpgradeCost} pts`,
+                    affordable: score >= speedUpgradeCost,
+                    symbol: '↑'
                 },
                 {
                     name: 'HEALTH RESTORE',
-                    desc: `Health: ${health}/${maxHealth} | Cost: ${healthRestoreCost} pts`,
-                    affordable: score >= healthRestoreCost && health < maxHealth
+                    desc: `Health: ${health}/${maxHealth} → +10 HP`,
+                    cost: `Cost: ${healthRestoreCost} pts`,
+                    affordable: score >= healthRestoreCost && health < maxHealth,
+                    symbol: '♥'
                 }
             ];
             
             items.forEach((item, index) => {
-                const y = 180 + index * 80;
+                const y = panelY + 120 + index * 80;
                 
-                // Highlight selected item
+                // Item background
                 if (index === shopSelection) {
-                    ctx.fillStyle = item.affordable ? '#ffcc00' : '#666';
-                    ctx.fillRect(100, y - 30, canvas.width - 200, 60);
-                    ctx.fillStyle = '#000';
-                } else {
+                    ctx.fillStyle = item.affordable ? 'rgba(255, 204, 0, 0.2)' : 'rgba(100, 100, 100, 0.2)';
+                    ctx.fillRect(panelX + 30, y - 30, panelWidth - 60, 60);
                     ctx.strokeStyle = item.affordable ? '#ffcc00' : '#666';
-                    ctx.strokeRect(100, y - 30, canvas.width - 200, 60);
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(panelX + 30, y - 30, panelWidth - 60, 60);
+                    ctx.fillStyle = item.affordable ? '#ffcc00' : '#666';
+                } else {
+                    ctx.strokeStyle = item.affordable ? '#660' : '#333';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(panelX + 30, y - 30, panelWidth - 60, 60);
                     ctx.fillStyle = item.affordable ? '#ffcc00' : '#666';
                 }
                 
+                // Symbol
+                ctx.font = '24px Courier New';
+                ctx.textAlign = 'left';
+                ctx.fillText(item.symbol, panelX + 50, y);
+                
+                // Item name
                 ctx.font = 'bold 18px Courier New';
                 ctx.textAlign = 'left';
-                ctx.fillText(item.name, 120, y);
+                ctx.fillText(item.name, panelX + 90, y);
                 
+                // Description
                 ctx.font = '14px Courier New';
-                ctx.fillText(item.desc, 120, y + 20);
+                ctx.fillStyle = item.affordable ? '#ccc' : '#666';
+                ctx.fillText(item.desc, panelX + 90, y + 20);
+                
+                // Cost
+                ctx.textAlign = 'right';
+                ctx.fillStyle = item.affordable ? '#ffcc00' : '#666';
+                ctx.font = 'bold 16px Courier New';
+                ctx.fillText(item.cost, panelX + panelWidth - 50, y + 10);
             });
             
-            // Back button at bottom
-            const backY = canvas.height - 100;
+            // Back button
+            const backY = panelY + panelHeight - 70;
             if (shopSelection === 3) {
-                ctx.fillStyle = '#ff3333';
-                ctx.fillRect(canvas.width / 2 - 100, backY - 25, 200, 50);
-                ctx.fillStyle = '#000';
-            } else {
+                ctx.fillStyle = 'rgba(255, 51, 51, 0.2)';
+                ctx.fillRect(panelX + 200, backY - 25, 200, 50);
                 ctx.strokeStyle = '#ff3333';
-                ctx.strokeRect(canvas.width / 2 - 100, backY - 25, 200, 50);
+                ctx.lineWidth = 2;
+                ctx.strokeRect(panelX + 200, backY - 25, 200, 50);
+                ctx.fillStyle = '#ff3333';
+            } else {
+                ctx.strokeStyle = '#633';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(panelX + 200, backY - 25, 200, 50);
                 ctx.fillStyle = '#ff3333';
             }
             
-            ctx.font = 'bold 18px Courier New';
+            ctx.font = '20px Courier New';
             ctx.textAlign = 'center';
-            ctx.fillText('BACK TO PAUSE', canvas.width / 2, backY + 5);
+            ctx.fillText('◀ BACK TO PAUSE', canvas.width / 2, backY + 5);
             
-            // Instructions
-            ctx.fillStyle = '#666';
-            ctx.font = '14px Courier New';
-            ctx.textAlign = 'center';
-            ctx.fillText('Use W/S or UP/DOWN arrows to select, ENTER to purchase', canvas.width / 2, canvas.height - 50);
+            // Footer hint
+            ctx.fillStyle = '#660';
+            ctx.font = '12px Courier New';
+            ctx.fillText('Press ESC to return to pause', canvas.width / 2, panelY + panelHeight - 15);
         }
         
         // Draw game over screen on canvas
@@ -1570,29 +1722,103 @@
             ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Game over title
+            // Draw game over panel
+            const panelWidth = 500;
+            const panelHeight = 400;
+            const panelX = (canvas.width - panelWidth) / 2;
+            const panelY = (canvas.height - panelHeight) / 2;
+            
+            // Panel background
+            ctx.fillStyle = 'rgba(0, 4, 40, 0.95)';
+            ctx.fillRect(panelX, panelY, panelWidth, panelHeight);
+            
+            // Panel border
+            ctx.strokeStyle = '#ff3333';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(panelX, panelY, panelWidth, panelHeight);
+            
+            // Inner border
+            ctx.strokeStyle = '#633';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(panelX + 10, panelY + 10, panelWidth - 20, panelHeight - 20);
+            
+            // Game over title with glow
+            ctx.shadowColor = '#ff3333';
+            ctx.shadowBlur = 20;
             ctx.fillStyle = '#ff3333';
-            ctx.font = 'bold 48px Courier New';
+            ctx.font = 'bold 42px Courier New';
             ctx.textAlign = 'center';
-            ctx.fillText('GAME OVER', canvas.width / 2, 150);
+            ctx.fillText('GAME OVER', canvas.width / 2, panelY + 60);
+            ctx.shadowBlur = 0;
+            
+            // Final stats panel
+            ctx.fillStyle = 'rgba(255, 51, 51, 0.1)';
+            ctx.fillRect(panelX + 30, panelY + 90, panelWidth - 60, 120);
+            ctx.strokeStyle = '#633';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(panelX + 30, panelY + 90, panelWidth - 60, 120);
             
             // Stats
             ctx.fillStyle = '#ccc';
+            ctx.font = '16px Courier New';
+            ctx.fillText('FINAL STATISTICS', canvas.width / 2, panelY + 115);
+            
             ctx.font = '24px Courier New';
-            ctx.fillText(`Final Score: ${score}`, canvas.width / 2, 220);
-            ctx.fillText(`Waves Survived: ${wave}`, canvas.width / 2, 260);
-            
-            // Restart button
             ctx.fillStyle = '#ff3333';
-            ctx.fillRect(canvas.width / 2 - 150, 320, 300, 60);
-            ctx.fillStyle = '#000';
-            ctx.font = 'bold 24px Courier New';
-            ctx.fillText('PLAY AGAIN', canvas.width / 2, 355);
+            ctx.fillText(`SCORE: ${score}`, canvas.width / 2, panelY + 145);
             
-            // Instructions
-            ctx.fillStyle = '#666';
-            ctx.font = '14px Courier New';
-            ctx.fillText('Press ENTER to play again or ESC for main menu', canvas.width / 2, canvas.height - 50);
+            ctx.fillStyle = '#ccc';
+            ctx.fillText(`WAVE: ${wave}`, canvas.width / 2, panelY + 175);
+            ctx.fillText(`ENEMIES DESTROYED: ${enemiesDestroyed}`, canvas.width / 2, panelY + 200);
+            
+            // Action buttons
+            const buttonY = panelY + 240;
+            
+            // Play again button
+            if (gameOverSelection === 0) {
+                ctx.fillStyle = 'rgba(255, 51, 51, 0.3)';
+                ctx.fillRect(panelX + 50, buttonY, panelWidth - 100, 50);
+                ctx.strokeStyle = '#ff3333';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(panelX + 50, buttonY, panelWidth - 100, 50);
+                ctx.fillStyle = '#ff3333';
+            } else {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.fillRect(panelX + 50, buttonY, panelWidth - 100, 50);
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(panelX + 50, buttonY, panelWidth - 100, 50);
+                ctx.fillStyle = '#ccc';
+            }
+            
+            ctx.font = 'bold 20px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('PLAY AGAIN', canvas.width / 2, buttonY + 30);
+            
+            // Main menu button
+            const menuButtonY = buttonY + 60;
+            if (gameOverSelection === 1) {
+                ctx.fillStyle = 'rgba(0, 255, 255, 0.3)';
+                ctx.fillRect(panelX + 50, menuButtonY, panelWidth - 100, 50);
+                ctx.strokeStyle = '#0ff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(panelX + 50, menuButtonY, panelWidth - 100, 50);
+                ctx.fillStyle = '#0ff';
+            } else {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                ctx.fillRect(panelX + 50, menuButtonY, panelWidth - 100, 50);
+                ctx.strokeStyle = '#666';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(panelX + 50, menuButtonY, panelWidth - 100, 50);
+                ctx.fillStyle = '#ccc';
+            }
+            
+            ctx.fillText('MAIN MENU', canvas.width / 2, menuButtonY + 30);
+            
+            // Footer hint
+            ctx.fillStyle = '#633';
+            ctx.font = '12px Courier New';
+            ctx.fillText('Use W/S or UP/DOWN to select, ENTER to confirm', canvas.width / 2, panelY + panelHeight - 15);
         }
         
         // Frame rate limiting
@@ -1611,6 +1837,9 @@
                 }
             }
             lastTime = currentTime;
+            
+            // Check for boss music changes
+            checkBossMusic();
             
             // Clear canvas fully
             ctx.fillStyle = 'rgb(0, 4, 40)';
@@ -1715,6 +1944,7 @@
             player.x = canvas.width / 2 - 20;
             player.y = canvas.height - 80;
             
+            updateBGM();
             gameLoop();
         }
         
@@ -1746,12 +1976,14 @@
             player.x = canvas.width / 2 - 20;
             player.y = canvas.height - 80;
             
+            updateBGM();
             gameLoop();
         }
         
         // Game over
         function gameOver() {
             gameState = 'gameOver';
+            updateBGM();
         }
         
         // Event listeners
@@ -1789,11 +2021,14 @@
                     playSound('uiTap');
                     if (pauseSelection === 0) {
                         gameState = 'playing';
+                        updateBGM();
                     } else if (pauseSelection === 1) {
                         gameState = 'shop';
+                        updateBGM();
                         shopSelection = 0;
                     } else if (pauseSelection === 2) {
                         gameState = 'menu';
+                        updateBGM();
                         menuSelection = 0;
                     }
                 }
@@ -1818,6 +2053,7 @@
                         restoreHealthFromShop();
                     } else if (shopSelection === 3) {
                         gameState = 'paused';
+                        updateBGM();
                         pauseSelection = 0;
                     }
                 }
@@ -1826,12 +2062,25 @@
             
             // Handle game over screen
             if (gameState === 'gameOver') {
-                if (key === 'enter') {
+                if (key === 'w' || key === 'arrowup') {
+                    gameOverSelection = (gameOverSelection - 1 + 2) % 2;
+                    playSound('menuSelect');
+                } else if (key === 's' || key === 'arrowdown') {
+                    gameOverSelection = (gameOverSelection + 1) % 2;
+                    playSound('menuSelect');
+                } else if (key === 'enter') {
                     playSound('uiTap');
-                    startGame();
+                    if (gameOverSelection === 0) {
+                        startGame();
+                    } else if (gameOverSelection === 1) {
+                        gameState = 'menu';
+                        updateBGM();
+                        menuSelection = 0;
+                    }
                 } else if (key === 'escape') {
                     playSound('uiTap');
                     gameState = 'menu';
+                    updateBGM();
                     menuSelection = 0;
                 }
                 return;
@@ -1860,6 +2109,7 @@
                 // Pause with ESC
                 if (e.key === 'Escape') {
                     gameState = 'paused';
+                    updateBGM();
                     pauseSelection = 0;
                 }
             }
@@ -1939,14 +2189,14 @@
                 const clickX = mouseX;
                 const clickY = mouseY;
                 
-                // Check START GAME button
+                // Check START GAME button (moved to y: 430)
                 if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                    clickY >= 275 && clickY <= 325) {
+                    clickY >= 405 && clickY <= 455) {
                     menuSelection = 0;
                 }
-                // Check ENDLESS MODE button
+                // Check ENDLESS MODE button (moved to y: 490)
                 else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                         clickY >= 335 && clickY <= 385) {
+                         clickY >= 465 && clickY <= 515) {
                     menuSelection = 1;
                 }
             }
@@ -1956,19 +2206,25 @@
                 const clickX = mouseX;
                 const clickY = mouseY;
                 
+                // Calculate panel positions
+                const panelWidth = 500;
+                const panelHeight = 400;
+                const panelX = (canvas.width - panelWidth) / 2;
+                const panelY = (canvas.height - panelHeight) / 2;
+                
                 // Check RESUME button
-                if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                    clickY >= 275 && clickY <= 325) {
+                if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                    clickY >= panelY + 115 && clickY <= panelY + 165) {
                     pauseSelection = 0;
                 }
                 // Check SHOP button
-                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                         clickY >= 335 && clickY <= 385) {
+                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                         clickY >= panelY + 185 && clickY <= panelY + 235) {
                     pauseSelection = 1;
                 }
                 // Check MAIN MENU button
-                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                         clickY >= 395 && clickY <= 445) {
+                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                         clickY >= panelY + 255 && clickY <= panelY + 305) {
                     pauseSelection = 2;
                 }
             }
@@ -1978,21 +2234,52 @@
                 const clickX = mouseX;
                 const clickY = mouseY;
                 
-                if (clickX >= 100 && clickX <= canvas.width - 100) {
-                    if (clickY >= 150 && clickY <= 210) {
+                // Calculate panel positions
+                const panelWidth = 600;
+                const panelHeight = 500;
+                const panelX = (canvas.width - panelWidth) / 2;
+                const panelY = (canvas.height - panelHeight) / 2;
+                
+                if (clickX >= panelX + 30 && clickX <= panelX + panelWidth - 30) {
+                    if (clickY >= panelY + 90 && clickY <= panelY + 150) {
                         shopSelection = 0;
-                    } else if (clickY >= 230 && clickY <= 290) {
+                    } else if (clickY >= panelY + 170 && clickY <= panelY + 230) {
                         shopSelection = 1;
-                    } else if (clickY >= 310 && clickY <= 370) {
+                    } else if (clickY >= panelY + 250 && clickY <= panelY + 310) {
                         shopSelection = 2;
                     }
                 }
                 
                 // Check back button at bottom
-                const backY = canvas.height - 100;
-                if (clickX >= canvas.width / 2 - 100 && clickX <= canvas.width / 2 + 100 &&
+                const backY = panelY + panelHeight - 70;
+                if (clickX >= panelX + 200 && clickX <= panelX + panelWidth - 200 &&
                     clickY >= backY - 25 && clickY <= backY + 25) {
                     shopSelection = 3;
+                }
+            }
+            
+            // Update game over selection based on mouse hover
+            if (gameState === 'gameOver') {
+                const clickX = mouseX;
+                const clickY = mouseY;
+                
+                // Calculate panel positions
+                const panelWidth = 500;
+                const panelHeight = 400;
+                const panelX = (canvas.width - panelWidth) / 2;
+                const panelY = (canvas.height - panelHeight) / 2;
+                const buttonY = panelY + 240;
+                const menuButtonY = buttonY + 60;
+                
+                // Check PLAY AGAIN button
+                if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                    clickY >= buttonY && clickY <= buttonY + 50) {
+                    gameOverSelection = 0;
+                }
+                // Check MAIN MENU button
+                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                         clickY >= menuButtonY && clickY <= menuButtonY + 50) {
+                    gameOverSelection = 1;
                 }
             }
         });
@@ -2008,15 +2295,15 @@
                 const clickX = (e.clientX - rect.left) * scaleX;
                 const clickY = (e.clientY - rect.top) * scaleY;
                 
-                // Check START GAME button (y: 300, width: 300, height: 50)
+                // Check START GAME button (moved to y: 430)
                 if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                    clickY >= 275 && clickY <= 325) {
+                    clickY >= 405 && clickY <= 455) {
                     playSound('uiTap');
                     startGame();
                 }
-                // Check ENDLESS MODE button (y: 360, width: 300, height: 50)
+                // Check ENDLESS MODE button (moved to y: 490)
                 else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                         clickY >= 335 && clickY <= 385) {
+                         clickY >= 465 && clickY <= 515) {
                     playSound('uiTap');
                     startEndlessMode();
                 }
@@ -2030,24 +2317,33 @@
                 const clickX = (e.clientX - rect.left) * scaleX;
                 const clickY = (e.clientY - rect.top) * scaleY;
                 
-                // Check RESUME button (y: 300, width: 300, height: 50)
-                if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                    clickY >= 275 && clickY <= 325) {
+                // Calculate panel positions
+                const panelWidth = 500;
+                const panelHeight = 400;
+                const panelX = (canvas.width - panelWidth) / 2;
+                const panelY = (canvas.height - panelHeight) / 2;
+                
+                // Check RESUME button
+                if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                    clickY >= panelY + 115 && clickY <= panelY + 165) {
                     playSound('uiTap');
                     gameState = 'playing';
+                    updateBGM();
                 }
-                // Check SHOP button (y: 360, width: 300, height: 50)
-                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                         clickY >= 335 && clickY <= 385) {
+                // Check SHOP button
+                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                         clickY >= panelY + 185 && clickY <= panelY + 235) {
                     playSound('uiTap');
                     gameState = 'shop';
+                    updateBGM();
                     shopSelection = 0;
                 }
-                // Check MAIN MENU button (y: 420, width: 300, height: 50)
-                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                         clickY >= 395 && clickY <= 445) {
+                // Check MAIN MENU button
+                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                         clickY >= panelY + 255 && clickY <= panelY + 305) {
                     playSound('uiTap');
                     gameState = 'menu';
+                    updateBGM();
                     menuSelection = 0;
                 }
             }
@@ -2060,26 +2356,33 @@
                 const clickX = (e.clientX - rect.left) * scaleX;
                 const clickY = (e.clientY - rect.top) * scaleY;
                 
-                // Check shop items (x: 100-700, y: 180-420)
-                if (clickX >= 100 && clickX <= canvas.width - 100) {
-                    if (clickY >= 150 && clickY <= 210) {
+                // Calculate panel positions
+                const panelWidth = 600;
+                const panelHeight = 500;
+                const panelX = (canvas.width - panelWidth) / 2;
+                const panelY = (canvas.height - panelHeight) / 2;
+                
+                // Check shop items
+                if (clickX >= panelX + 30 && clickX <= panelX + panelWidth - 30) {
+                    if (clickY >= panelY + 90 && clickY <= panelY + 150) {
                         playSound('uiTap');
                         upgradeRangeFromShop();
-                    } else if (clickY >= 230 && clickY <= 290) {
+                    } else if (clickY >= panelY + 170 && clickY <= panelY + 230) {
                         playSound('uiTap');
                         upgradeSpeedFromShop();
-                    } else if (clickY >= 310 && clickY <= 370) {
+                    } else if (clickY >= panelY + 250 && clickY <= panelY + 310) {
                         playSound('uiTap');
                         restoreHealthFromShop();
                     }
                 }
                 
                 // Check back button at bottom
-                const backY = canvas.height - 100;
-                if (clickX >= canvas.width / 2 - 100 && clickX <= canvas.width / 2 + 100 &&
+                const backY = panelY + panelHeight - 70;
+                if (clickX >= panelX + 200 && clickX <= panelX + panelWidth - 200 &&
                     clickY >= backY - 25 && clickY <= backY + 25) {
                     playSound('uiTap');
                     gameState = 'paused';
+                    updateBGM();
                     pauseSelection = 0;
                 }
             }
@@ -2092,11 +2395,27 @@
                 const clickX = (e.clientX - rect.left) * scaleX;
                 const clickY = (e.clientY - rect.top) * scaleY;
                 
-                // Check PLAY AGAIN button (y: 320, width: 300, height: 60)
-                if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                    clickY >= 320 && clickY <= 380) {
+                // Calculate panel positions
+                const panelWidth = 500;
+                const panelHeight = 400;
+                const panelX = (canvas.width - panelWidth) / 2;
+                const panelY = (canvas.height - panelHeight) / 2;
+                const buttonY = panelY + 240;
+                const menuButtonY = buttonY + 60;
+                
+                // Check PLAY AGAIN button
+                if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                    clickY >= buttonY && clickY <= buttonY + 50) {
                     playSound('uiTap');
                     startGame();
+                }
+                // Check MAIN MENU button
+                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                         clickY >= menuButtonY && clickY <= menuButtonY + 50) {
+                    playSound('uiTap');
+                    gameState = 'menu';
+                    updateBGM();
+                    menuSelection = 0;
                 }
             }
         });
@@ -2261,6 +2580,612 @@
                     break;
             }
         }
+        
+        // 8-bit Background Music System - Pre-composed Songs
+        class BGMPlayer {
+            constructor() {
+                this.audioContext = audioContext;
+                this.isPlaying = false;
+                this.currentTrack = null;
+                this.gainNode = null;
+                this.buffers = {};
+                this.currentSource = null;
+                this.initSongs();
+            }
+            
+            initSongs() {
+                // Create pre-composed song buffers
+                this.buffers.menu = this.createSongBuffer(this.composeMenuSong(), 5.5);
+                this.buffers.playing = this.createSongBuffer(this.composeGameplaySong(), 6.1);
+                this.buffers.boss = this.createSongBuffer(this.composeBossSong(), 9.0);
+            }
+            
+            composeMenuSong() {
+                // Synthwave/retro-futuristic menu song - completely different style
+                const melody = [
+                    // Futuristic synthwave melody
+                    { pitch: 'C4', time: 0, duration: 0.2 },
+                    { pitch: 'A3', time: 0.2, duration: 0.2 },
+                    { pitch: 'F3', time: 0.4, duration: 0.2 },
+                    { pitch: 'C3', time: 0.6, duration: 0.4 },
+                    
+                    { pitch: 'D4', time: 1.0, duration: 0.2 },
+                    { pitch: 'Bb3', time: 1.2, duration: 0.2 },
+                    { pitch: 'G3', time: 1.4, duration: 0.2 },
+                    { pitch: 'D3', time: 1.6, duration: 0.4 },
+                    
+                    { pitch: 'E4', time: 2.0, duration: 0.15 },
+                    { pitch: 'C4', time: 2.15, duration: 0.15 },
+                    { pitch: 'A3', time: 2.3, duration: 0.15 },
+                    { pitch: 'E3', time: 2.45, duration: 0.15 },
+                    { pitch: 'C4', time: 2.6, duration: 0.4 },
+                    
+                    { pitch: 'F4', time: 3.0, duration: 0.2 },
+                    { pitch: 'D4', time: 3.2, duration: 0.2 },
+                    { pitch: 'Bb3', time: 3.4, duration: 0.2 },
+                    { pitch: 'G3', time: 3.6, duration: 0.4 },
+                    
+                    { pitch: 'G4', time: 4.0, duration: 0.15 },
+                    { pitch: 'E4', time: 4.15, duration: 0.15 },
+                    { pitch: 'C4', time: 4.3, duration: 0.15 },
+                    { pitch: 'A3', time: 4.45, duration: 0.15 },
+                    { pitch: 'F3', time: 4.6, duration: 0.15 },
+                    { pitch: 'D3', time: 4.75, duration: 0.15 },
+                    { pitch: 'C3', time: 4.9, duration: 0.6 }
+                ];
+                
+                const bass = [
+                    // Driving synthwave bassline
+                    { pitch: 'C2', time: 0, duration: 0.8 },
+                    { pitch: 'C2', time: 0.8, duration: 0.8 },
+                    { pitch: 'G1', time: 1.6, duration: 0.8 },
+                    { pitch: 'G1', time: 2.4, duration: 0.8 },
+                    { pitch: 'F1', time: 3.2, duration: 0.8 },
+                    { pitch: 'F1', time: 4.0, duration: 0.8 },
+                    { pitch: 'C1', time: 4.8, duration: 0.8 }
+                ];
+                
+                const pads = [
+                    // Atmospheric synth pads
+                    { pitch: 'C3', time: 0, duration: 2.0 },
+                    { pitch: 'E3', time: 0, duration: 2.0 },
+                    { pitch: 'G3', time: 0, duration: 2.0 },
+                    { pitch: 'C3', time: 2.0, duration: 2.0 },
+                    { pitch: 'D3', time: 2.0, duration: 2.0 },
+                    { pitch: 'F3', time: 2.0, duration: 2.0 },
+                    { pitch: 'A3', time: 2.0, duration: 2.0 },
+                    { pitch: 'D3', time: 4.0, duration: 1.4 },
+                    { pitch: 'F3', time: 4.0, duration: 1.4 },
+                    { pitch: 'A3', time: 4.0, duration: 1.4 }
+                ];
+                
+                const arpeggios = [
+                    // Fast synthwave arpeggios
+                    { pitch: 'C5', time: 0.1, duration: 0.05 },
+                    { pitch: 'E5', time: 0.15, duration: 0.05 },
+                    { pitch: 'G5', time: 0.2, duration: 0.05 },
+                    { pitch: 'C6', time: 0.25, duration: 0.1 },
+                    
+                    { pitch: 'D5', time: 1.1, duration: 0.05 },
+                    { pitch: 'F5', time: 1.15, duration: 0.05 },
+                    { pitch: 'A5', time: 1.2, duration: 0.05 },
+                    { pitch: 'D6', time: 1.25, duration: 0.1 },
+                    
+                    { pitch: 'E5', time: 2.1, duration: 0.05 },
+                    { pitch: 'G5', time: 2.15, duration: 0.05 },
+                    { pitch: 'B5', time: 2.2, duration: 0.05 },
+                    { pitch: 'E6', time: 2.25, duration: 0.1 },
+                    
+                    { pitch: 'F5', time: 3.1, duration: 0.05 },
+                    { pitch: 'A5', time: 3.15, duration: 0.05 },
+                    { pitch: 'C6', time: 3.2, duration: 0.05 },
+                    { pitch: 'F6', time: 3.25, duration: 0.1 },
+                    
+                    { pitch: 'G5', time: 4.1, duration: 0.05 },
+                    { pitch: 'B5', time: 4.15, duration: 0.05 },
+                    { pitch: 'D6', time: 4.2, duration: 0.05 },
+                    { pitch: 'G6', time: 4.25, duration: 0.05 },
+                    { pitch: 'C7', time: 4.3, duration: 0.2 }
+                ];
+                
+                return { melody, bass, pads, arpeggios };
+            }
+            
+            composeGameplaySong() {
+                // Industrial/techno gameplay song - aggressive electronic style
+                const melody = [
+                    // Hard-hitting techno melody
+                    { pitch: 'C5', time: 0, duration: 0.1 },
+                    { pitch: 'C4', time: 0.1, duration: 0.1 },
+                    { pitch: 'C5', time: 0.2, duration: 0.1 },
+                    { pitch: 'C4', time: 0.2, duration: 0.1 },
+                    { pitch: 'C5', time: 0.3, duration: 0.1 },
+                    { pitch: 'C4', time: 0.3, duration: 0.1 },
+                    { pitch: 'C5', time: 0.4, duration: 0.2 },
+                    
+                    { pitch: 'Eb5', time: 0.6, duration: 0.1 },
+                    { pitch: 'Eb4', time: 0.6, duration: 0.1 },
+                    { pitch: 'Eb5', time: 0.7, duration: 0.1 },
+                    { pitch: 'Eb4', time: 0.7, duration: 0.1 },
+                    { pitch: 'Eb5', time: 0.8, duration: 0.1 },
+                    { pitch: 'Eb4', time: 0.8, duration: 0.1 },
+                    { pitch: 'Eb5', time: 0.9, duration: 0.1 },
+                    { pitch: 'Eb4', time: 0.9, duration: 0.1 },
+                    { pitch: 'Eb5', time: 1.0, duration: 0.2 },
+                    
+                    { pitch: 'G5', time: 1.2, duration: 0.1 },
+                    { pitch: 'G4', time: 1.2, duration: 0.1 },
+                    { pitch: 'G5', time: 1.3, duration: 0.1 },
+                    { pitch: 'G4', time: 1.3, duration: 0.1 },
+                    { pitch: 'G5', time: 1.4, duration: 0.1 },
+                    { pitch: 'G4', time: 1.4, duration: 0.1 },
+                    { pitch: 'G5', time: 1.5, duration: 0.1 },
+                    { pitch: 'G4', time: 1.5, duration: 0.1 },
+                    { pitch: 'G5', time: 1.6, duration: 0.2 },
+                    
+                    { pitch: 'Bb5', time: 1.8, duration: 0.1 },
+                    { pitch: 'Bb4', time: 1.8, duration: 0.1 },
+                    { pitch: 'Bb5', time: 1.9, duration: 0.1 },
+                    { pitch: 'Bb4', time: 1.9, duration: 0.1 },
+                    { pitch: 'Bb5', time: 2.0, duration: 0.1 },
+                    { pitch: 'Bb4', time: 2.0, duration: 0.1 },
+                    { pitch: 'Bb5', time: 2.1, duration: 0.1 },
+                    { pitch: 'Bb4', time: 2.1, duration: 0.1 },
+                    { pitch: 'Bb5', time: 2.2, duration: 0.1 },
+                    { pitch: 'Bb4', time: 2.2, duration: 0.1 },
+                    { pitch: 'Bb5', time: 2.3, duration: 0.1 },
+                    { pitch: 'Bb4', time: 2.3, duration: 0.1 },
+                    { pitch: 'Bb5', time: 2.4, duration: 0.1 },
+                    { pitch: 'Bb4', time: 2.4, duration: 0.1 },
+                    { pitch: 'Bb5', time: 2.5, duration: 0.1 },
+                    { pitch: 'Bb4', time: 2.5, duration: 0.1 },
+                    { pitch: 'Bb5', time: 2.6, duration: 0.2 },
+                    
+                    { pitch: 'C6', time: 2.8, duration: 0.1 },
+                    { pitch: 'C5', time: 2.8, duration: 0.1 },
+                    { pitch: 'C6', time: 2.9, duration: 0.1 },
+                    { pitch: 'C5', time: 2.9, duration: 0.1 },
+                    { pitch: 'C6', time: 3.0, duration: 0.1 },
+                    { pitch: 'C5', time: 3.0, duration: 0.1 },
+                    { pitch: 'C6', time: 3.1, duration: 0.1 },
+                    { pitch: 'C5', time: 3.1, duration: 0.1 },
+                    { pitch: 'C6', time: 3.2, duration: 0.1 },
+                    { pitch: 'C5', time: 3.2, duration: 0.1 },
+                    { pitch: 'C6', time: 3.3, duration: 0.1 },
+                    { pitch: 'C5', time: 3.3, duration: 0.1 },
+                    { pitch: 'C6', time: 3.4, duration: 0.1 },
+                    { pitch: 'C5', time: 3.4, duration: 0.1 },
+                    { pitch: 'C6', time: 3.5, duration: 0.1 },
+                    { pitch: 'C5', time: 3.5, duration: 0.1 },
+                    { pitch: 'C6', time: 3.6, duration: 0.1 },
+                    { pitch: 'C5', time: 3.6, duration: 0.1 },
+                    { pitch: 'C6', time: 3.7, duration: 0.1 },
+                    { pitch: 'C5', time: 3.7, duration: 0.1 },
+                    { pitch: 'C6', time: 3.8, duration: 0.1 },
+                    { pitch: 'C5', time: 3.8, duration: 0.1 },
+                    { pitch: 'C6', time: 3.9, duration: 0.1 },
+                    { pitch: 'C5', time: 3.9, duration: 0.1 },
+                    { pitch: 'C6', time: 4.0, duration: 0.1 },
+                    { pitch: 'C5', time: 4.0, duration: 0.1 },
+                    { pitch: 'C6', time: 4.1, duration: 0.2 },
+                    
+                    { pitch: 'G5', time: 4.3, duration: 0.1 },
+                    { pitch: 'G4', time: 4.3, duration: 0.1 },
+                    { pitch: 'G5', time: 4.4, duration: 0.1 },
+                    { pitch: 'G4', time: 4.4, duration: 0.1 },
+                    { pitch: 'G5', time: 4.5, duration: 0.1 },
+                    { pitch: 'G4', time: 4.5, duration: 0.1 },
+                    { pitch: 'G5', time: 4.6, duration: 0.1 },
+                    { pitch: 'G4', time: 4.6, duration: 0.1 },
+                    { pitch: 'G5', time: 4.7, duration: 0.1 },
+                    { pitch: 'G4', time: 4.7, duration: 0.1 },
+                    { pitch: 'G5', time: 4.8, duration: 0.1 },
+                    { pitch: 'G4', time: 4.8, duration: 0.1 },
+                    { pitch: 'G5', time: 4.9, duration: 0.1 },
+                    { pitch: 'G4', time: 4.9, duration: 0.1 },
+                    { pitch: 'G5', time: 5.0, duration: 0.1 },
+                    { pitch: 'G4', time: 5.0, duration: 0.1 },
+                    { pitch: 'G5', time: 5.1, duration: 1.0 }
+                ];
+                
+                const bass = [
+                    // Pounding industrial bass
+                    { pitch: 'C2', time: 0, duration: 0.2 },
+                    { pitch: 'C2', time: 0.2, duration: 0.2 },
+                    { pitch: 'C2', time: 0.4, duration: 0.2 },
+                    { pitch: 'C2', time: 0.4, duration: 0.2 },
+                    { pitch: 'C2', time: 0.6, duration: 0.2 },
+                    { pitch: 'C2', time: 0.6, duration: 0.2 },
+                    { pitch: 'C2', time: 0.8, duration: 0.2 },
+                    { pitch: 'C2', time: 0.8, duration: 0.2 },
+                    
+                    { pitch: 'Eb2', time: 1.0, duration: 0.2 },
+                    { pitch: 'Eb2', time: 1.0, duration: 0.2 },
+                    { pitch: 'Eb2', time: 1.2, duration: 0.2 },
+                    { pitch: 'Eb2', time: 1.2, duration: 0.2 },
+                    { pitch: 'Eb2', time: 1.4, duration: 0.2 },
+                    { pitch: 'Eb2', time: 1.4, duration: 0.2 },
+                    { pitch: 'Eb2', time: 1.6, duration: 0.2 },
+                    { pitch: 'Eb2', time: 1.6, duration: 0.2 },
+                    { pitch: 'Eb2', time: 1.8, duration: 0.2 },
+                    { pitch: 'Eb2', time: 1.8, duration: 0.2 },
+                    
+                    { pitch: 'G2', time: 2.0, duration: 0.2 },
+                    { pitch: 'G2', time: 2.0, duration: 0.2 },
+                    { pitch: 'G2', time: 2.2, duration: 0.2 },
+                    { pitch: 'G2', time: 2.2, duration: 0.2 },
+                    { pitch: 'G2', time: 2.4, duration: 0.2 },
+                    { pitch: 'G2', time: 2.4, duration: 0.2 },
+                    { pitch: 'G2', time: 2.6, duration: 0.2 },
+                    { pitch: 'G2', time: 2.6, duration: 0.2 },
+                    { pitch: 'G2', time: 2.8, duration: 0.2 },
+                    { pitch: 'G2', time: 2.8, duration: 0.2 },
+                    { pitch: 'G2', time: 3.0, duration: 0.2 },
+                    { pitch: 'G2', time: 3.0, duration: 0.2 },
+                    { pitch: 'G2', time: 3.2, duration: 0.2 },
+                    { pitch: 'G2', time: 3.2, duration: 0.2 },
+                    { pitch: 'G2', time: 3.4, duration: 0.2 },
+                    { pitch: 'G2', time: 3.4, duration: 0.2 },
+                    { pitch: 'G2', time: 3.6, duration: 0.2 },
+                    { pitch: 'G2', time: 3.6, duration: 0.2 },
+                    { pitch: 'G2', time: 3.8, duration: 0.2 },
+                    { pitch: 'G2', time: 3.8, duration: 0.2 },
+                    { pitch: 'G2', time: 4.0, duration: 0.2 },
+                    { pitch: 'G2', time: 4.0, duration: 0.2 },
+                    { pitch: 'G2', time: 4.2, duration: 0.2 },
+                    { pitch: 'G2', time: 4.2, duration: 0.2 },
+                    { pitch: 'G2', time: 4.4, duration: 0.2 },
+                    { pitch: 'G2', time: 4.4, duration: 0.2 },
+                    { pitch: 'G2', time: 4.6, duration: 0.2 },
+                    { pitch: 'G2', time: 4.6, duration: 0.2 },
+                    { pitch: 'G2', time: 4.8, duration: 0.2 },
+                    { pitch: 'G2', time: 4.8, duration: 0.2 },
+                    { pitch: 'G2', time: 5.0, duration: 1.1 }
+                ];
+                
+                const drums = [
+                    // Industrial drum pattern
+                    { pitch: 'C3', time: 0, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 0.5, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 1.0, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 1.5, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 2.0, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 2.5, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 3.0, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 3.5, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 4.0, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 4.5, duration: 0.05 }, // Kick
+                    { pitch: 'C3', time: 5.0, duration: 0.05 }, // Kick
+                    
+                    { pitch: 'G5', time: 0.25, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 0.75, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 1.25, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 1.75, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 2.25, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 2.75, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 3.25, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 3.75, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 4.25, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 4.75, duration: 0.05 }, // Hi-hat
+                    { pitch: 'G5', time: 5.25, duration: 0.05 }, // Hi-hat
+                    
+                    { pitch: 'C4', time: 0.125, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 0.625, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 1.125, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 1.625, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 2.125, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 2.625, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 3.125, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 3.625, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 4.125, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 4.625, duration: 0.025 }, // Snare
+                    { pitch: 'C4', time: 5.125, duration: 0.025 }, // Snare
+                ];
+                
+                return { melody, bass, drums };
+            }
+            
+            composeBossSong() {
+                // Sophisticated boss song - dramatic complex battle composition
+                const melody = [
+                    // Ominous opening melody
+                    { pitch: 'G3', time: 0, duration: 0.3 },
+                    { pitch: 'Bb3', time: 0.3, duration: 0.3 },
+                    { pitch: 'D4', time: 0.6, duration: 0.3 },
+                    { pitch: 'F4', time: 0.9, duration: 0.4 },
+                    { pitch: 'G4', time: 1.3, duration: 0.2 },
+                    { pitch: 'Eb4', time: 1.5, duration: 0.2 },
+                    { pitch: 'C4', time: 1.7, duration: 0.3 },
+                    { pitch: 'D4', time: 2.0, duration: 0.2 },
+                    { pitch: 'F4', time: 2.2, duration: 0.2 },
+                    { pitch: 'Ab4', time: 2.4, duration: 0.3 },
+                    
+                    // Tension building with chromaticism
+                    { pitch: 'G4', time: 2.7, duration: 0.15 },
+                    { pitch: 'Ab4', time: 2.85, duration: 0.15 },
+                    { pitch: 'A4', time: 3.0, duration: 0.15 },
+                    { pitch: 'Bb4', time: 3.15, duration: 0.15 },
+                    { pitch: 'B4', time: 3.3, duration: 0.15 },
+                    { pitch: 'C5', time: 3.45, duration: 0.3 },
+                    { pitch: 'B4', time: 3.75, duration: 0.1 },
+                    { pitch: 'Bb4', time: 3.85, duration: 0.1 },
+                    { pitch: 'A4', time: 3.95, duration: 0.1 },
+                    { pitch: 'Ab4', time: 4.05, duration: 0.1 },
+                    { pitch: 'G4', time: 4.15, duration: 0.2 },
+                    
+                    // Dramatic development
+                    { pitch: 'F4', time: 4.35, duration: 0.15 },
+                    { pitch: 'Ab4', time: 4.5, duration: 0.15 },
+                    { pitch: 'C5', time: 4.65, duration: 0.15 },
+                    { pitch: 'Eb5', time: 4.8, duration: 0.15 },
+                    { pitch: 'F5', time: 4.95, duration: 0.3 },
+                    { pitch: 'Eb5', time: 5.25, duration: 0.1 },
+                    { pitch: 'D5', time: 5.35, duration: 0.1 },
+                    { pitch: 'Db5', time: 5.45, duration: 0.1 },
+                    { pitch: 'C5', time: 5.55, duration: 0.1 },
+                    { pitch: 'B4', time: 5.65, duration: 0.2 },
+                    
+                    // Climax with diminished runs
+                    { pitch: 'C5', time: 5.85, duration: 0.08 },
+                    { pitch: 'D5', time: 5.93, duration: 0.08 },
+                    { pitch: 'Eb5', time: 6.01, duration: 0.08 },
+                    { pitch: 'F5', time: 6.09, duration: 0.08 },
+                    { pitch: 'Gb5', time: 6.17, duration: 0.08 },
+                    { pitch: 'G5', time: 6.25, duration: 0.08 },
+                    { pitch: 'Ab5', time: 6.33, duration: 0.08 },
+                    { pitch: 'A5', time: 6.41, duration: 0.08 },
+                    { pitch: 'Bb5', time: 6.49, duration: 0.08 },
+                    { pitch: 'B5', time: 6.57, duration: 0.08 },
+                    { pitch: 'C6', time: 6.65, duration: 0.08 },
+                    { pitch: 'D6', time: 6.73, duration: 0.08 },
+                    { pitch: 'Eb6', time: 6.81, duration: 0.08 },
+                    { pitch: 'F6', time: 6.89, duration: 0.08 },
+                    { pitch: 'G6', time: 6.97, duration: 0.08 },
+                    { pitch: 'Ab6', time: 7.05, duration: 0.08 },
+                    { pitch: 'A6', time: 7.13, duration: 0.08 },
+                    { pitch: 'Bb6', time: 7.21, duration: 0.08 },
+                    { pitch: 'C7', time: 7.29, duration: 0.71 }
+                ];
+                
+                const harmony = [
+                    // Complex minor key harmony
+                    { pitch: 'G2', time: 0, duration: 0.6 }, // G minor
+                    { pitch: 'Bb2', time: 0, duration: 0.6 },
+                    { pitch: 'D3', time: 0, duration: 0.6 },
+                    { pitch: 'C3', time: 0.6, duration: 0.6 }, // C minor
+                    { pitch: 'Eb3', time: 0.6, duration: 0.6 },
+                    { pitch: 'G3', time: 0.6, duration: 0.6 },
+                    { pitch: 'F2', time: 1.2, duration: 0.6 }, // D diminished
+                    { pitch: 'Ab2', time: 1.2, duration: 0.6 },
+                    { pitch: 'C3', time: 1.2, duration: 0.6 },
+                    { pitch: 'G2', time: 1.8, duration: 0.6 }, // G minor
+                    { pitch: 'Bb2', time: 1.8, duration: 0.6 },
+                    { pitch: 'D3', time: 1.8, duration: 0.6 },
+                    { pitch: 'C2', time: 2.4, duration: 0.6 }, // C minor
+                    { pitch: 'Eb2', time: 2.4, duration: 0.6 },
+                    { pitch: 'G2', time: 2.4, duration: 0.6 },
+                    { pitch: 'F2', time: 3.0, duration: 0.6 }, // D diminished
+                    { pitch: 'Ab2', time: 3.0, duration: 0.6 },
+                    { pitch: 'C3', time: 3.0, duration: 0.6 },
+                    { pitch: 'Eb2', time: 3.6, duration: 0.6 }, // Eb major
+                    { pitch: 'G2', time: 3.6, duration: 0.6 },
+                    { pitch: 'Bb2', time: 3.6, duration: 0.6 },
+                    { pitch: 'Ab2', time: 4.2, duration: 0.6 }, // Ab major
+                    { pitch: 'C3', time: 4.2, duration: 0.6 },
+                    { pitch: 'Eb3', time: 4.2, duration: 0.6 },
+                    { pitch: 'Bb2', time: 4.8, duration: 0.6 }, // G minor
+                    { pitch: 'D3', time: 4.8, duration: 0.6 },
+                    { pitch: 'F3', time: 4.8, duration: 0.6 },
+                    { pitch: 'C2', time: 5.4, duration: 0.6 }, // C minor
+                    { pitch: 'Eb2', time: 5.4, duration: 0.6 },
+                    { pitch: 'G2', time: 5.4, duration: 0.6 },
+                    { pitch: 'F2', time: 6.0, duration: 0.6 }, // D diminished
+                    { pitch: 'Ab2', time: 6.0, duration: 0.6 },
+                    { pitch: 'C3', time: 6.0, duration: 0.6 },
+                    { pitch: 'G2', time: 6.6, duration: 0.69 } // G minor final
+                ];
+                
+                const counterMelody = [
+                    // Dramatic counter-melody in upper register
+                    { pitch: 'D5', time: 0.3, duration: 0.15 },
+                    { pitch: 'F5', time: 0.45, duration: 0.15 },
+                    { pitch: 'Ab5', time: 0.6, duration: 0.2 },
+                    { pitch: 'G5', time: 0.8, duration: 0.1 },
+                    { pitch: 'F5', time: 0.9, duration: 0.1 },
+                    { pitch: 'Eb5', time: 1.0, duration: 0.1 },
+                    { pitch: 'D5', time: 1.1, duration: 0.1 },
+                    { pitch: 'C5', time: 1.2, duration: 0.15 },
+                    { pitch: 'Eb5', time: 1.35, duration: 0.15 },
+                    { pitch: 'F5', time: 1.5, duration: 0.15 },
+                    { pitch: 'Ab5', time: 1.65, duration: 0.2 },
+                    { pitch: 'G5', time: 1.85, duration: 0.1 },
+                    { pitch: 'F5', time: 1.95, duration: 0.1 },
+                    { pitch: 'Eb5', time: 2.05, duration: 0.1 },
+                    { pitch: 'D5', time: 2.15, duration: 0.1 },
+                    { pitch: 'C5', time: 2.25, duration: 0.15 },
+                    { pitch: 'B4', time: 2.4, duration: 0.1 },
+                    { pitch: 'C5', time: 2.5, duration: 0.1 },
+                    { pitch: 'D5', time: 2.6, duration: 0.1 },
+                    { pitch: 'Eb5', time: 2.7, duration: 0.1 },
+                    { pitch: 'F5', time: 2.8, duration: 0.1 },
+                    { pitch: 'G5', time: 2.9, duration: 0.15 },
+                    { pitch: 'Ab5', time: 3.05, duration: 0.15 },
+                    { pitch: 'A5', time: 3.2, duration: 0.15 },
+                    { pitch: 'Bb5', time: 3.35, duration: 0.15 },
+                    { pitch: 'B5', time: 3.5, duration: 0.15 },
+                    { pitch: 'C6', time: 3.65, duration: 0.2 },
+                    { pitch: 'B5', time: 3.85, duration: 0.1 },
+                    { pitch: 'Bb5', time: 3.95, duration: 0.1 },
+                    { pitch: 'A5', time: 4.05, duration: 0.1 },
+                    { pitch: 'Ab5', time: 4.15, duration: 0.1 },
+                    { pitch: 'G5', time: 4.25, duration: 0.1 },
+                    { pitch: 'F5', time: 4.35, duration: 0.15 },
+                    { pitch: 'Ab5', time: 4.5, duration: 0.15 },
+                    { pitch: 'C6', time: 4.65, duration: 0.15 },
+                    { pitch: 'Eb6', time: 4.8, duration: 0.15 },
+                    { pitch: 'F6', time: 4.95, duration: 0.2 },
+                    { pitch: 'Eb6', time: 5.15, duration: 0.1 },
+                    { pitch: 'D6', time: 5.25, duration: 0.1 },
+                    { pitch: 'Db6', time: 5.35, duration: 0.1 },
+                    { pitch: 'C6', time: 5.45, duration: 0.1 },
+                    { pitch: 'B5', time: 5.55, duration: 0.1 },
+                    { pitch: 'A5', time: 5.65, duration: 0.15 },
+                    { pitch: 'C6', time: 5.8, duration: 0.08 },
+                    { pitch: 'D6', time: 5.88, duration: 0.08 },
+                    { pitch: 'Eb6', time: 5.96, duration: 0.08 },
+                    { pitch: 'F6', time: 6.04, duration: 0.08 },
+                    { pitch: 'Gb6', time: 6.12, duration: 0.08 },
+                    { pitch: 'G6', time: 6.2, duration: 0.08 },
+                    { pitch: 'Ab6', time: 6.28, duration: 0.08 },
+                    { pitch: 'A6', time: 6.36, duration: 0.08 },
+                    { pitch: 'Bb6', time: 6.44, duration: 0.08 },
+                    { pitch: 'B6', time: 6.52, duration: 0.08 },
+                    { pitch: 'C7', time: 6.6, duration: 0.08 },
+                    { pitch: 'D7', time: 6.68, duration: 0.08 },
+                    { pitch: 'Eb7', time: 6.76, duration: 0.08 },
+                    { pitch: 'F7', time: 6.84, duration: 0.08 },
+                    { pitch: 'G7', time: 6.92, duration: 0.08 },
+                    { pitch: 'Ab7', time: 7.0, duration: 0.08 },
+                    { pitch: 'A7', time: 7.08, duration: 0.08 },
+                    { pitch: 'Bb7', time: 7.16, duration: 0.08 },
+                    { pitch: 'C8', time: 7.24, duration: 0.76 }
+                ];
+                
+                return { melody, harmony, counterMelody };
+            }
+            
+            getNoteFrequency(note) {
+                const notes = {
+                    'C1': 32.70, 'D1': 36.71, 'E1': 41.20, 'F1': 43.65, 'G1': 49.00, 'A1': 55.00, 'Bb1': 58.27, 'B1': 61.74,
+                    'C2': 65.41, 'D2': 73.42, 'E2': 82.41, 'F2': 87.31, 'G2': 98.00, 'A2': 110.00, 'Bb2': 116.54, 'B2': 123.47,
+                    'C3': 130.81, 'D3': 146.83, 'E3': 164.81, 'F3': 174.61, 'G3': 196.00, 'A3': 220.00, 'Bb3': 233.08, 'B3': 246.94,
+                    'C4': 261.63, 'D4': 293.66, 'E4': 329.63, 'F4': 349.23, 'G4': 392.00, 'A4': 440.00, 'Bb4': 466.16, 'B4': 493.88,
+                    'C5': 523.25, 'D5': 587.33, 'E5': 659.25, 'F5': 698.46, 'G5': 783.99, 'A5': 880.00, 'Bb5': 932.33, 'B5': 987.77,
+                    'C6': 1046.50, 'D6': 1174.66, 'E6': 1318.51, 'F6': 1396.91, 'G6': 1567.98, 'A6': 1760.00, 'Bb6': 1864.66, 'B6': 1975.53,
+                    'C7': 2093.00, 'D7': 2349.32, 'E7': 2637.02, 'F7': 2793.83, 'G7': 3135.96, 'A7': 3520.00, 'Bb7': 3729.31, 'B7': 3951.07,
+                    'C8': 4186.01, 'Db8': 4434.92, 'D8': 4698.63, 'Eb8': 4978.03, 'F8': 5274.04, 'Gb8': 5587.65, 'G8': 5919.91, 'Ab8': 6271.93, 'A8': 6644.88, 'Bb8': 7040.00, 'B8': 7458.62
+                };
+                return notes[note] || 440;
+            }
+            
+            createSongBuffer(song, duration) {
+                const sampleRate = this.audioContext.sampleRate;
+                const buffer = this.audioContext.createBuffer(2, sampleRate * duration, sampleRate);
+                
+                // Generate audio data for both channels
+                for (let channel = 0; channel < 2; channel++) {
+                    const channelData = buffer.getChannelData(channel);
+                    
+                    // Clear buffer
+                    for (let i = 0; i < channelData.length; i++) {
+                        channelData[i] = 0;
+                    }
+                    
+                    // Add main melody (loudest)
+                    song.melody.forEach(note => {
+                        this.addNoteToBuffer(channelData, note, sampleRate, 'square', 1.0, 0.12);
+                    });
+                    
+                    // Add harmony (medium volume)
+                    if (song.harmony) {
+                        song.harmony.forEach(note => {
+                            this.addNoteToBuffer(channelData, note, sampleRate, 'triangle', 0.5, 0.08);
+                        });
+                    }
+                    
+                    // Add counter-melody (quieter, higher octave)
+                    if (song.counterMelody) {
+                        song.counterMelody.forEach(note => {
+                            this.addNoteToBuffer(channelData, note, sampleRate, 'square', 1.5, 0.06);
+                        });
+                    }
+                }
+                
+                return buffer;
+            }
+            
+            addNoteToBuffer(buffer, note, sampleRate, waveform = 'square', octaveMultiplier = 1, volume = 0.1) {
+                const frequency = this.getNoteFrequency(note.pitch) * octaveMultiplier;
+                const startSample = Math.floor(note.time * sampleRate);
+                const endSample = Math.floor((note.time + note.duration) * sampleRate);
+                
+                for (let i = startSample; i < endSample && i < buffer.length; i++) {
+                    const t = (i - startSample) / sampleRate;
+                    const phase = 2 * Math.PI * frequency * t;
+                    
+                    let sample = 0;
+                    if (waveform === 'square') {
+                        sample = Math.sign(Math.sin(phase)) * volume;
+                    } else if (waveform === 'triangle') {
+                        sample = (2 / Math.PI) * Math.asin(Math.sin(phase)) * volume;
+                    }
+                    
+                    // ADSR envelope
+                    const noteProgress = t / note.duration;
+                    let envelope = 0;
+                    if (noteProgress < 0.05) {
+                        envelope = noteProgress / 0.05; // Attack
+                    } else if (noteProgress < 0.3) {
+                        envelope = 1.0 - (noteProgress - 0.05) * 0.3; // Decay
+                    } else {
+                        envelope = 0.7 * Math.exp(-(noteProgress - 0.3) * 3); // Release
+                    }
+                    
+                    buffer[i] += sample * envelope;
+                }
+            }
+            
+            play(trackName) {
+                this.stop();
+                
+                if (!this.buffers[trackName]) return;
+                
+                // Create gain node
+                this.gainNode = this.audioContext.createGain();
+                this.gainNode.connect(this.audioContext.destination);
+                this.gainNode.gain.value = 0.1;
+                
+                // Create buffer source
+                this.currentSource = this.audioContext.createBufferSource();
+                this.currentSource.buffer = this.buffers[trackName];
+                this.currentSource.connect(this.gainNode);
+                this.currentSource.loop = true;
+                
+                this.currentSource.start(0);
+                this.isPlaying = true;
+                this.currentTrack = trackName;
+            }
+            
+            stop() {
+                this.isPlaying = false;
+                
+                if (this.currentSource) {
+                    try {
+                        this.currentSource.stop();
+                    } catch (e) {}
+                    this.currentSource = null;
+                }
+                
+                if (this.gainNode) {
+                    this.gainNode.disconnect();
+                    this.gainNode = null;
+                }
+            }
+        }
+        
+        // Initialize BGM player (disabled)
+        const bgmPlayer = {
+            play: function() {},
+            stop: function() {}
+        };
+        
+        // BGM management based on game state (disabled)
+        function updateBGM() {
+            bgmPlayer.stop();
+        }
+        
+        // Check for boss music changes during gameplay (disabled)
+        function checkBossMusic() {}
     </script>
 </body>
 </html>
