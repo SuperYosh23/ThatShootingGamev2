@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Space Shooter</title>
+    <title>That Shooting Game v2</title>
     <style>
         * {
             margin: 0;
@@ -38,18 +38,6 @@
             max-height: 100%;
         }
         
-        #hud {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            z-index: 10;
-        }
-        
         .hud-panel {
             background: rgba(0, 0, 0, 0.8);
             border: 2px solid #0ff;
@@ -70,23 +58,52 @@
         }
         
         .hud-item {
-            margin: 8px 0;
             display: flex;
             align-items: center;
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 600;
+            margin: 0 10px;
         }
         
         .hud-label {
             color: #0ff;
-            margin-right: 10px;
-            min-width: 80px;
+            margin-right: 8px;
+            font-size: 12px;
         }
         
         .hud-value {
             color: #fff;
-            font-size: 18px;
+            font-size: 16px;
             text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+        
+        .health-bar-container {
+            position: relative;
+            width: 80px;
+            height: 16px;
+            background: rgba(255, 0, 0, 0.3);
+            border: 1px solid #0ff;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-left: 8px;
+        }
+        
+        .health-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #ff3333, #ffaa00, #00ff00);
+            transition: width 0.3s ease;
+            border-radius: 6px;
+        }
+        
+        .health-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #fff;
+            font-size: 8px;
+            font-weight: bold;
+            text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
         }
         
         .upgrade-section {
@@ -365,24 +382,41 @@
             color: #ccc;
         }
         
-        #startBtn {
+        .menu-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        
+        #startBtn, #endlessBtn {
             background: linear-gradient(135deg, #0ff, #088);
             border: none;
             padding: 15px 40px;
             font-size: 20px;
             font-weight: 600;
             cursor: pointer;
-            margin-top: 30px;
             border-radius: 10px;
             transition: all 0.3s ease;
             color: #000;
             box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
         }
         
+        #endlessBtn {
+            background: linear-gradient(135deg, #ff6b6b, #ff3333);
+            box-shadow: 0 4px 20px rgba(255, 51, 51, 0.4);
+        }
+        
         #startBtn:hover {
             background: linear-gradient(135deg, #fff, #0ff);
             transform: translateY(-3px);
             box-shadow: 0 6px 30px rgba(0, 255, 255, 0.6);
+        }
+        
+        #endlessBtn:hover {
+            background: linear-gradient(135deg, #fff, #ff6b6b);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 30px rgba(255, 51, 51, 0.6);
         }
         
         .controls-info {
@@ -404,46 +438,23 @@
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
-        <div id="hud">
-            <div class="hud-panel hud-left">
-                <div class="hud-item">
-                    <span class="hud-label">SCORE:</span>
-                    <span class="hud-value" id="score">0</span>
-                </div>
-                <div class="hud-item">
-                    <span class="hud-label">LIVES:</span>
-                    <span class="hud-value" id="lives">3</span>
-                </div>
-                <div class="hud-item">
-                    <span class="hud-label">WAVE:</span>
-                    <span class="hud-value" id="wave">1</span>
-                </div>
-                <div class="hud-item">
-                    <span class="hud-label">RANGE:</span>
-                    <span class="hud-value" id="range">100px</span>
-                </div>
-            </div>
-            
-            <div class="hud-panel hud-right">
-                <div class="enemy-info">
-                    <div class="enemy-title">ENEMY TYPES</div>
-                    <div class="enemy-item">
-                        <span>Basic (10 pts)</span>
-                        <div class="enemy-color" style="background: #ff3333;"></div>
-                    </div>
-                    <div class="enemy-item">
-                        <span>Fast (20 pts)</span>
-                        <div class="enemy-color" style="background: #ff9933;"></div>
-                    </div>
-                    <div class="enemy-item">
-                        <span>Heavy (50 pts)</span>
-                        <div class="enemy-color" style="background: #9933ff;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div id="pauseScreen">
             <h2>PAUSED</h2>
+            <div class="enemy-info">
+                <div class="enemy-title">ENEMY TYPES</div>
+                <div class="enemy-item">
+                    <span>Basic (10 pts)</span>
+                    <div class="enemy-color" style="background: #ff3333;"></div>
+                </div>
+                <div class="enemy-item">
+                    <span>Fast (20 pts)</span>
+                    <div class="enemy-color" style="background: #ff9933;"></div>
+                </div>
+                <div class="enemy-item">
+                    <span>Heavy (50 pts)</span>
+                    <div class="enemy-color" style="background: #9933ff;"></div>
+                </div>
+            </div>
             <button class="pause-btn" id="resumeBtn">Resume Game</button>
             <button class="pause-btn" id="shopBtn">Shop</button>
             <button class="pause-btn" id="mainMenuBtn">Main Menu</button>
@@ -458,11 +469,23 @@
                 <p>Increase your shooting range by 50px</p>
                 <button class="shop-btn" id="shopUpgradeRangeBtn">Upgrade (50 pts)</button>
             </div>
+            <div class="shop-item">
+                <h3>Speed Upgrade</h3>
+                <p>Current Level: <span id="shopSpeedLevel">1</span></p>
+                <p>Increase movement speed by 5%</p>
+                <button class="shop-btn" id="shopUpgradeSpeedBtn">Upgrade (30 pts)</button>
+            </div>
+            <div class="shop-item">
+                <h3>Health Restoration</h3>
+                <p>Current Health: <span id="shopCurrentHealth">100</span>/<span id="shopMaxHealth">100</span></p>
+                <p>Restore 10 health points</p>
+                <button class="shop-btn" id="shopRestoreHealthBtn">Heal (20 pts)</button>
+            </div>
             <button class="shop-btn back-btn" id="backToPauseBtn">Back to Pause</button>
         </div>
         
         <div id="startScreen">
-            <h1>SPACE SHOOTER</h1>
+            <h1>That Shooting Game v2</h1>
             <div class="controls-info">
                 <p>🎮 Move with WASD</p>
                 <p>🖱️ Move mouse to aim</p>
@@ -476,7 +499,10 @@
                 <p style="color: #9933ff;">▬ Heavy: Purple square - 50 points (3 hits)</p>
                 <p style="color: #ffff00;">💡 Upgrade your shooting range to hit more enemies!</p>
             </div>
-            <button id="startBtn">START GAME</button>
+            <div class="menu-buttons">
+                <button id="startBtn">START GAME</button>
+                <button id="endlessBtn">ENDLESS MODE</button>
+            </div>
         </div>
         <div id="gameOver">
             <h2>GAME OVER</h2>
@@ -520,7 +546,8 @@
         let gameRunning = false;
         let gamePaused = false;
         let score = 0;
-        let lives = 3;
+        let health = 100;
+        let maxHealth = 100;
         let wave = 1;
         let enemiesDestroyed = 0;
         let enemiesPerWave = 5;
@@ -529,6 +556,9 @@
         let rangeLevel = 1;
         let shootingRange = 100;
         let rangeUpgradeCost = 50;
+        let speedLevel = 1;
+        let speedUpgradeCost = 30;
+        let healthRestoreCost = 20;
         
         // Mouse position (relative to canvas)
         let mouseX = canvas.width / 2;
@@ -540,13 +570,15 @@
             y: canvas.height - 80,
             width: 40,
             height: 40,
-            speed: 5,
+            baseSpeed: 8,
+            get speed() { return this.baseSpeed * (1 + (speedLevel - 1) * 0.05); },
             canShoot: true,
             shootCooldown: 0
         };
         
         // Arrays for game objects
         let bullets = [];
+        let bossBullets = [];
         let enemies = [];
         let particles = [];
         let stars = [];
@@ -649,56 +681,88 @@
             ctx.textAlign = 'center';
             ctx.fillText('P', player.x + player.width / 2, player.y + player.height / 2 + 3);
             
+            // Draw health bar above player
+            const healthPercent = Math.max(0, health / maxHealth);
+            const barWidth = 40;
+            const barHeight = 4;
+            const barX = player.x + (player.width - barWidth) / 2;
+            const barY = player.y - 10;
+            
+            // Health bar background
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+            ctx.fillRect(barX, barY, barWidth, barHeight);
+            
+            // Health bar fill with color based on health
+            if (healthPercent > 0.6) {
+                ctx.fillStyle = '#00ff00';
+            } else if (healthPercent > 0.3) {
+                ctx.fillStyle = '#ffaa00';
+            } else {
+                ctx.fillStyle = '#ff3333';
+            }
+            ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
+            
+            // Health bar border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(barX, barY, barWidth, barHeight);
+            
             ctx.restore();
         }
         
         // Create bullet
         function createBullet(targetX, targetY) {
             if (player.canShoot && player.shootCooldown <= 0) {
+                // Use same starting point as aiming line (center of player)
+                const startX = player.x + player.width / 2;
+                const startY = player.y + player.height / 2;
+                
                 // Calculate bullet direction
-                const dx = targetX - (player.x + player.width / 2);
-                const dy = targetY - (player.y + player.height / 2);
+                const dx = targetX - startX;
+                const dy = targetY - startY;
                 const angle = Math.atan2(dy, dx);
-                const vx = Math.cos(angle) * 8;
-                const vy = Math.sin(angle) * 8;
+                const vx = Math.cos(angle) * 12;
+                const vy = Math.sin(angle) * 12;
                 
                 bullets.push({
-                    x: player.x + player.width / 2 - 2,
-                    y: player.y,
+                    x: startX - 2,
+                    y: startY - 5,
                     width: 4,
                     height: 10,
                     vx: vx,
                     vy: vy,
-                    speed: 8,
-                    startX: player.x + player.width / 2,
-                    startY: player.y,
+                    speed: 12,
+                    startX: startX,
+                    startY: startY,
                     maxDistance: shootingRange
                 });
-                player.shootCooldown = 10;
+                player.shootCooldown = 6;
             }
         }
         
-        // Draw bullets
+        // Draw bullets (optimized)
         function drawBullets() {
             bullets.forEach(bullet => {
-                // Bullet with gradient
-                const gradient = ctx.createRadialGradient(
-                    bullet.x + bullet.width / 2, bullet.y + bullet.height / 2, 0,
-                    bullet.x + bullet.width / 2, bullet.y + bullet.height / 2, bullet.width
-                );
-                gradient.addColorStop(0, '#ffffff');
-                gradient.addColorStop(0.5, '#ffff00');
-                gradient.addColorStop(1, '#ff9900');
-                
-                ctx.fillStyle = gradient;
+                // Simple solid color bullet for performance
+                ctx.fillStyle = '#ffff00';
                 ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
-                
-                // Add glow effect
-                ctx.shadowColor = '#ffff00';
-                ctx.shadowBlur = 8;
-                ctx.fillStyle = 'rgba(255, 255, 0, 0.3)';
-                ctx.fillRect(bullet.x - 2, bullet.y - 2, bullet.width + 4, bullet.height + 4);
-                ctx.shadowBlur = 0;
+            });
+        }
+        
+        // Draw boss bullets
+        function drawBossBullets() {
+            bossBullets.forEach(bullet => {
+                ctx.fillStyle = bullet.color;
+                ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
+            });
+        }
+        
+        // Update boss bullets
+        function updateBossBullets() {
+            bossBullets = bossBullets.filter(bullet => {
+                bullet.x += bullet.vx;
+                bullet.y += bullet.vy;
+                return bullet.y < canvas.height + bullet.height;
             });
         }
         
@@ -727,10 +791,76 @@
             }
         }
         
-        // Create enemy
+        // Create enemy with cumulative wave-based progression and endless mode
         function createEnemy() {
-            const types = ['basic', 'fast', 'heavy'];
-            const type = types[Math.floor(Math.random() * types.length)];
+            let type;
+            let baseSpeed;
+            
+            // Boss fight for wave 4
+            if (wave === 4) {
+                createBoss();
+                return;
+            }
+            
+            // Endless mode after wave 3
+            if (wave > 4) {
+                // In endless mode, keep wave 3 enemies but increase difficulty
+                const endlessWave = wave - 4; // How many waves into endless mode
+                const speedMultiplier = 1 + (endlessWave * 0.2); // 20% faster per endless wave
+                
+                const availableTypes = ['basic', 'fast', 'heavy'];
+                type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+                
+                let enemy = {
+                    x: Math.random() * (canvas.width - 40),
+                    y: -40,
+                    width: 40,
+                    height: 40,
+                    type: type
+                };
+                
+                // Base speeds with endless progression
+                switch(type) {
+                    case 'basic':
+                        baseSpeed = 3;
+                        enemy.speed = baseSpeed * speedMultiplier;
+                        enemy.health = 1;
+                        enemy.color = '#ff3333';
+                        enemy.points = 10;
+                        break;
+                    case 'fast':
+                        baseSpeed = 6;
+                        enemy.speed = baseSpeed * speedMultiplier;
+                        enemy.health = 1;
+                        enemy.color = '#ff9933';
+                        enemy.points = 20;
+                        enemy.width = 30;
+                        enemy.height = 30;
+                        break;
+                    case 'heavy':
+                        baseSpeed = 1.5;
+                        enemy.speed = baseSpeed * speedMultiplier;
+                        enemy.health = 3;
+                        enemy.color = '#9933ff';
+                        enemy.points = 50;
+                        enemy.width = 50;
+                        enemy.height = 50;
+                        break;
+                }
+                
+                enemies.push(enemy);
+                return;
+            }
+            
+            // Regular mode (waves 1-3)
+            // Cumulative enemy types based on wave
+            const availableTypes = [];
+            if (wave >= 1) availableTypes.push('basic');
+            if (wave >= 2) availableTypes.push('fast');
+            if (wave >= 3) availableTypes.push('heavy');
+            
+            // Randomly select from available types
+            type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
             
             let enemy = {
                 x: Math.random() * (canvas.width - 40),
@@ -740,15 +870,20 @@
                 type: type
             };
             
+            // Base speeds with wave progression (10% faster per wave)
+            const speedMultiplier = 1 + (wave - 1) * 0.1;
+            
             switch(type) {
                 case 'basic':
-                    enemy.speed = 2;
+                    baseSpeed = 3;
+                    enemy.speed = baseSpeed * speedMultiplier;
                     enemy.health = 1;
                     enemy.color = '#ff3333';
                     enemy.points = 10;
                     break;
                 case 'fast':
-                    enemy.speed = 4;
+                    baseSpeed = 6;
+                    enemy.speed = baseSpeed * speedMultiplier;
                     enemy.health = 1;
                     enemy.color = '#ff9933';
                     enemy.points = 20;
@@ -756,7 +891,8 @@
                     enemy.height = 30;
                     break;
                 case 'heavy':
-                    enemy.speed = 1;
+                    baseSpeed = 1.5;
+                    enemy.speed = baseSpeed * speedMultiplier;
                     enemy.health = 3;
                     enemy.color = '#9933ff';
                     enemy.points = 50;
@@ -768,120 +904,178 @@
             enemies.push(enemy);
         }
         
-        // Draw enemies
+        // Create boss enemy for wave 4
+        function createBoss() {
+            const boss = {
+                x: canvas.width / 2 - 75,
+                y: -100,
+                width: 150,
+                height: 100,
+                type: 'boss',
+                speed: 1.5,
+                health: 50,
+                maxHealth: 50,
+                color: '#ff00ff',
+                points: 1000,
+                shootCooldown: 0,
+                enemySpawnCooldown: 0
+            };
+            enemies.push(boss);
+        }
+        
+        // Boss shooting mechanics - more aggressive
+        function bossShoot(boss) {
+            // Shoot 3 bullets in a spread pattern
+            for (let i = -1; i <= 1; i++) {
+                bossBullets.push({
+                    x: boss.x + boss.width / 2 - 3,
+                    y: boss.y + boss.height,
+                    width: 6,
+                    height: 12,
+                    vx: i * 2, // Spread bullets horizontally
+                    vy: 6,
+                    color: '#ff00ff'
+                });
+            }
+        }
+        
+        // Boss spawns basic enemies - more frequent
+        function bossSpawnEnemy(boss) {
+            const enemy = {
+                x: boss.x + Math.random() * boss.width - 20,
+                y: boss.y + boss.height,
+                width: 30,
+                height: 30,
+                type: 'basic',
+                speed: 3,
+                health: 1,
+                color: '#ff3333',
+                points: 10
+            };
+            enemies.push(enemy);
+        }
+        
+        // Draw enemies with unique graphics
         function drawEnemies() {
             enemies.forEach(enemy => {
                 ctx.save();
                 
-                // Add rotation animation for visual interest
-                const time = Date.now() * 0.001;
-                const rotation = time * (enemy.type === 'fast' ? 3 : 1);
-                
-                ctx.translate(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
-                ctx.rotate(rotation);
-                ctx.translate(-(enemy.x + enemy.width / 2), -(enemy.y + enemy.height / 2));
-                
-                // Draw different shapes with gradients for different enemy types
-                if (enemy.type === 'basic') {
-                    // Triangle with gradient
-                    const gradient = ctx.createLinearGradient(enemy.x, enemy.y, enemy.x, enemy.y + enemy.height);
-                    gradient.addColorStop(0, '#ff6666');
-                    gradient.addColorStop(1, '#ff3333');
-                    ctx.fillStyle = gradient;
+                if (enemy.type === 'boss') {
+                    // Draw boss enemy - simplified for performance
+                    ctx.fillStyle = '#ff00ff';
                     
+                    // Main body
+                    ctx.fillRect(enemy.x + 20, enemy.y + 20, enemy.width - 40, enemy.height - 40);
+                    
+                    // Wings
                     ctx.beginPath();
-                    ctx.moveTo(enemy.x + enemy.width / 2, enemy.y + enemy.height);
-                    ctx.lineTo(enemy.x, enemy.y);
-                    ctx.lineTo(enemy.x + enemy.width, enemy.y);
+                    ctx.moveTo(enemy.x, enemy.y + 30);
+                    ctx.lineTo(enemy.x + 30, enemy.y + 50);
+                    ctx.lineTo(enemy.x + 30, enemy.y + 20);
                     ctx.closePath();
                     ctx.fill();
                     
-                    // Add border
-                    ctx.strokeStyle = '#ffaaaa';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    
-                } else if (enemy.type === 'fast') {
-                    // Diamond with gradient
-                    const gradient = ctx.createRadialGradient(
-                        enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, 0,
-                        enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, enemy.width / 2
-                    );
-                    gradient.addColorStop(0, '#ffcc33');
-                    gradient.addColorStop(1, '#ff9933');
-                    ctx.fillStyle = gradient;
-                    
                     ctx.beginPath();
-                    ctx.moveTo(enemy.x + enemy.width / 2, enemy.y);
-                    ctx.lineTo(enemy.x + enemy.width, enemy.y + enemy.height / 2);
-                    ctx.lineTo(enemy.x + enemy.width / 2, enemy.y + enemy.height);
-                    ctx.lineTo(enemy.x, enemy.y + enemy.height / 2);
+                    ctx.moveTo(enemy.x + enemy.width, enemy.y + 30);
+                    ctx.lineTo(enemy.x + enemy.width - 30, enemy.y + 50);
+                    ctx.lineTo(enemy.x + enemy.width - 30, enemy.y + 20);
                     ctx.closePath();
                     ctx.fill();
                     
-                    // Add border
-                    ctx.strokeStyle = '#ffdd66';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                    
-                } else if (enemy.type === 'heavy') {
-                    // Rectangle with gradient and border
-                    const gradient = ctx.createLinearGradient(enemy.x, enemy.y, enemy.x + enemy.width, enemy.y + enemy.height);
-                    gradient.addColorStop(0, '#cc66ff');
-                    gradient.addColorStop(0.5, '#9933ff');
-                    gradient.addColorStop(1, '#6633cc');
-                    ctx.fillStyle = gradient;
-                    
-                    ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
-                    
-                    // Add border
-                    ctx.strokeStyle = '#cc99ff';
+                    // Boss border
+                    ctx.strokeStyle = '#ff99ff';
                     ctx.lineWidth = 3;
-                    ctx.strokeRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                    ctx.strokeRect(enemy.x + 20, enemy.y + 20, enemy.width - 40, enemy.height - 40);
                     
-                    // Add corner details
-                    ctx.fillStyle = '#cc99ff';
-                    ctx.fillRect(enemy.x + 2, enemy.y + 2, 8, 8);
-                    ctx.fillRect(enemy.x + enemy.width - 10, enemy.y + 2, 8, 8);
-                    ctx.fillRect(enemy.x + 2, enemy.y + enemy.height - 10, 8, 8);
-                    ctx.fillRect(enemy.x + enemy.width - 10, enemy.y + enemy.height - 10, 8, 8);
+                    // Simplified boss health bar
+                    const healthPercent = enemy.health / enemy.maxHealth;
+                    ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                    ctx.fillRect(enemy.x, enemy.y - 15, enemy.width, 8);
+                    
+                    ctx.fillStyle = healthPercent > 0.5 ? '#00ff00' : healthPercent > 0.25 ? '#ffaa00' : '#ff3333';
+                    ctx.fillRect(enemy.x, enemy.y - 15, enemy.width * healthPercent, 8);
+                    
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(enemy.x, enemy.y - 15, enemy.width, 8);
+                    
+                    // Boss label
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 14px Courier New';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('BOSS', enemy.x + enemy.width / 2, enemy.y - 20);
+                    
+                } else {
+                    // Regular enemies - simplified for performance
+                    if (enemy.type === 'basic') {
+                        // Simple triangle enemy
+                        ctx.fillStyle = '#ff3333';
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(enemy.x + enemy.width / 2, enemy.y + enemy.height);
+                        ctx.lineTo(enemy.x, enemy.y);
+                        ctx.lineTo(enemy.x + enemy.width, enemy.y);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        ctx.strokeStyle = '#ffaaaa';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                    } else if (enemy.type === 'fast') {
+                        // Simple diamond enemy
+                        ctx.fillStyle = '#ff9933';
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(enemy.x + enemy.width / 2, enemy.y);
+                        ctx.lineTo(enemy.x + enemy.width, enemy.y + enemy.height / 2);
+                        ctx.lineTo(enemy.x + enemy.width / 2, enemy.y + enemy.height);
+                        ctx.lineTo(enemy.x, enemy.y + enemy.height / 2);
+                        ctx.closePath();
+                        ctx.fill();
+                        
+                        ctx.strokeStyle = '#ffdd66';
+                        ctx.lineWidth = 2;
+                        ctx.stroke();
+                        
+                    } else if (enemy.type === 'heavy') {
+                        // Simple rectangle enemy
+                        ctx.fillStyle = '#9933ff';
+                        ctx.fillRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                        
+                        ctx.strokeStyle = '#cc99ff';
+                        ctx.lineWidth = 3;
+                        ctx.strokeRect(enemy.x, enemy.y, enemy.width, enemy.height);
+                        
+                        // Health bar for heavy enemies
+                        if (enemy.health > 1) {
+                            const healthPercent = enemy.health / 3;
+                            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                            ctx.fillRect(enemy.x, enemy.y - 12, enemy.width, 4);
+                            
+                            ctx.fillStyle = healthPercent > 0.5 ? '#00ff00' : healthPercent > 0.25 ? '#ffaa00' : '#ff3333';
+                            ctx.fillRect(enemy.x, enemy.y - 12, enemy.width * healthPercent, 4);
+                            
+                            ctx.strokeStyle = '#ffffff';
+                            ctx.lineWidth = 1;
+                            ctx.strokeRect(enemy.x, enemy.y - 12, enemy.width, 4);
+                        }
+                    }
                 }
                 
-                // Draw health bar for heavy enemies
-                if (enemy.type === 'heavy' && enemy.health > 1) {
-                    ctx.restore(); // Restore for health bar positioning
-                    
-                    // Health bar background
-                    ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
-                    ctx.fillRect(enemy.x, enemy.y - 12, enemy.width, 4);
-                    
-                    // Health bar fill
-                    const healthPercent = enemy.health / 3;
-                    const healthGradient = ctx.createLinearGradient(enemy.x, enemy.y - 12, enemy.x + enemy.width, enemy.y - 12);
-                    healthGradient.addColorStop(0, '#ff3333');
-                    healthGradient.addColorStop(healthPercent, '#ffaa00');
-                    healthGradient.addColorStop(Math.min(healthPercent + 0.1, 1), '#00ff00');
-                    
-                    ctx.fillStyle = healthGradient;
-                    ctx.fillRect(enemy.x, enemy.y - 12, enemy.width * healthPercent, 4);
-                    
-                    // Health bar border
-                    ctx.strokeStyle = '#ffffff';
-                    ctx.lineWidth = 1;
-                    ctx.strokeRect(enemy.x, enemy.y - 12, enemy.width, 4);
-                } else {
+                // Draw enemy type label with shadow for regular enemies
+                if (enemy.type !== 'boss') {
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                    ctx.shadowBlur = 4;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 10px Courier New';
+                    ctx.textAlign = 'center';
+                    let label = enemy.type.charAt(0).toUpperCase();
+                    ctx.fillText(label, enemy.x + enemy.width / 2, enemy.y + enemy.height / 2 + 3);
                     ctx.restore();
                 }
                 
-                // Draw enemy type label with shadow
-                ctx.save();
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                ctx.shadowBlur = 4;
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 10px Courier New';
-                ctx.textAlign = 'center';
-                let label = enemy.type.charAt(0).toUpperCase();
-                ctx.fillText(label, enemy.x + enemy.width / 2, enemy.y + enemy.height / 2 + 3);
                 ctx.restore();
             });
         }
@@ -890,6 +1084,21 @@
         function updateEnemies() {
             enemies = enemies.filter(enemy => {
                 enemy.y += enemy.speed;
+                
+                // Boss shooting and spawning - more aggressive
+                if (enemy.type === 'boss') {
+                    enemy.shootCooldown--;
+                    if (enemy.shootCooldown <= 0) {
+                        bossShoot(enemy);
+                        enemy.shootCooldown = 30; // Shoot every 0.5 seconds
+                    }
+                    
+                    enemy.enemySpawnCooldown--;
+                    if (enemy.enemySpawnCooldown <= 0) {
+                        bossSpawnEnemy(enemy);
+                        enemy.enemySpawnCooldown = 60; // Spawn enemy every second
+                    }
+                }
                 
                 // Sine wave movement for fast enemies
                 if (enemy.type === 'fast') {
@@ -900,12 +1109,12 @@
             });
         }
         
-        // Create particle explosion
+        // Create simple explosion particles
         function createExplosion(x, y, color) {
-            for (let i = 0; i < 20; i++) {
-                const angle = (Math.PI * 2 * i) / 20;
-                const speed = Math.random() * 6 + 2;
-                const size = Math.random() * 4 + 1;
+            for (let i = 0; i < 10; i++) {
+                const angle = (Math.PI * 2 * i) / 10;
+                const speed = Math.random() * 4 + 1;
+                const size = Math.random() * 3 + 1;
                 
                 particles.push({
                     x: x,
@@ -913,94 +1122,34 @@
                     vx: Math.cos(angle) * speed,
                     vy: Math.sin(angle) * speed,
                     size: size,
-                    life: 40,
-                    maxLife: 40,
-                    color: color,
-                    type: 'explosion'
-                });
-            }
-            
-            // Add sparkles
-            for (let i = 0; i < 10; i++) {
-                particles.push({
-                    x: x,
-                    y: y,
-                    vx: (Math.random() - 0.5) * 8,
-                    vy: (Math.random() - 0.5) * 8,
-                    size: Math.random() * 2 + 1,
-                    life: 30,
-                    maxLife: 30,
-                    color: '#ffffff',
-                    type: 'sparkle'
+                    life: 20,
+                    maxLife: 20,
+                    color: color
                 });
             }
         }
         
-        // Draw enhanced particles
+        // Draw simplified particles for performance
         function drawParticles() {
             particles.forEach(particle => {
                 const alpha = particle.life / particle.maxLife;
                 
-                if (particle.type === 'sparkle') {
-                    // Sparkle effect
-                    ctx.save();
-                    ctx.shadowColor = particle.color;
-                    ctx.shadowBlur = 10;
-                    ctx.fillStyle = particle.color;
-                    ctx.globalAlpha = alpha;
-                    
-                    // Draw star shape
-                    ctx.beginPath();
-                    for (let i = 0; i < 5; i++) {
-                        const angle = (Math.PI * 2 * i) / 5 - Math.PI / 2;
-                        const x = particle.x + Math.cos(angle) * particle.size;
-                        const y = particle.y + Math.sin(angle) * particle.size;
-                        if (i === 0) ctx.moveTo(x, y);
-                        else ctx.lineTo(x, y);
-                        
-                        const innerAngle = angle + Math.PI / 5;
-                        const innerX = particle.x + Math.cos(innerAngle) * (particle.size * 0.5);
-                        const innerY = particle.y + Math.sin(innerAngle) * (particle.size * 0.5);
-                        ctx.lineTo(innerX, innerY);
-                    }
-                    ctx.closePath();
-                    ctx.fill();
-                    ctx.restore();
-                } else {
-                    // Regular explosion particle
-                    const gradient = ctx.createRadialGradient(
-                        particle.x, particle.y, 0,
-                        particle.x, particle.y, particle.size
-                    );
-                    gradient.addColorStop(0, particle.color);
-                    gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-                    
-                    ctx.fillStyle = gradient;
-                    ctx.globalAlpha = alpha;
-                    ctx.fillRect(particle.x - particle.size, particle.y - particle.size, particle.size * 2, particle.size * 2);
-                }
-                
-                ctx.globalAlpha = 1;
+                // Simple solid color particles
+                ctx.fillStyle = particle.color;
+                ctx.globalAlpha = alpha;
+                ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
             });
+            ctx.globalAlpha = 1;
         }
         
-        // Update enhanced particles
+        // Update simplified particles
         function updateParticles() {
             particles = particles.filter(particle => {
                 particle.x += particle.vx;
                 particle.y += particle.vy;
                 particle.life--;
-                
-                // Add physics
                 particle.vx *= 0.98;
                 particle.vy *= 0.98;
-                particle.vy += 0.1; // Gravity
-                
-                // Sparkles twinkle
-                if (particle.type === 'sparkle') {
-                    particle.size = Math.sin(particle.life * 0.3) * 2 + 2;
-                }
-                
                 return particle.life > 0;
             });
         }
@@ -1050,6 +1199,23 @@
                 });
             });
             
+            // Boss bullet-player collisions
+            bossBullets.forEach((bullet, bulletIndex) => {
+                if (bullet.x < player.x + player.width &&
+                    bullet.x + bullet.width > player.x &&
+                    bullet.y < player.y + player.height &&
+                    bullet.y + bullet.height > player.y) {
+                    
+                    bossBullets.splice(bulletIndex, 1);
+                    health -= 10; // Boss bullets do 10 damage
+                    updateUI();
+                    
+                    if (health <= 0) {
+                        gameOver();
+                    }
+                }
+            });
+            
             // Player-enemy collisions
             enemies.forEach((enemy, index) => {
                 if (player.x < enemy.x + enemy.width &&
@@ -1059,31 +1225,37 @@
                     
                     createExplosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, enemy.color);
                     enemies.splice(index, 1);
-                    lives--;
+                    health -= 25; // Take 25 damage per collision
                     updateUI();
                     
-                    if (lives <= 0) {
+                    if (health <= 0) {
                         gameOver();
                     }
                 }
             });
         }
         
-        // Update UI
+        // Update UI (only shop elements now, HUD is drawn on canvas)
         function updateUI() {
-            document.getElementById('score').textContent = score;
-            document.getElementById('lives').textContent = lives;
-            document.getElementById('wave').textContent = wave;
-            document.getElementById('range').textContent = shootingRange + 'px';
-            
             // Update shop UI
             document.getElementById('shopRangeLevel').textContent = rangeLevel;
             document.getElementById('shopRange').textContent = shootingRange + 'px';
+            document.getElementById('shopSpeedLevel').textContent = speedLevel;
+            document.getElementById('shopCurrentHealth').textContent = Math.min(health, maxHealth);
+            document.getElementById('shopMaxHealth').textContent = maxHealth;
             
-            // Update shop button
-            const shopUpgradeBtn = document.getElementById('shopUpgradeRangeBtn');
-            shopUpgradeBtn.textContent = `Upgrade (${rangeUpgradeCost} pts)`;
-            shopUpgradeBtn.disabled = score < rangeUpgradeCost;
+            // Update shop buttons
+            const rangeUpgradeBtn = document.getElementById('shopUpgradeRangeBtn');
+            rangeUpgradeBtn.textContent = `Upgrade (${rangeUpgradeCost} pts)`;
+            rangeUpgradeBtn.disabled = score < rangeUpgradeCost;
+            
+            const speedUpgradeBtn = document.getElementById('shopUpgradeSpeedBtn');
+            speedUpgradeBtn.textContent = `Upgrade (${speedUpgradeCost} pts)`;
+            speedUpgradeBtn.disabled = score < speedUpgradeCost;
+            
+            const healthRestoreBtn = document.getElementById('shopRestoreHealthBtn');
+            healthRestoreBtn.textContent = `Heal (${healthRestoreCost} pts)`;
+            healthRestoreBtn.disabled = score < healthRestoreCost || health >= maxHealth;
         }
         
         // Pause game
@@ -1135,45 +1307,207 @@
             }
         }
         
-        // Spawn enemies
-        let spawnTimer = 0;
-        function spawnEnemies() {
-            spawnTimer++;
-            
-            if (spawnTimer > 60 - wave * 5) {
-                createEnemy();
-                spawnTimer = 0;
-            }
-            
-            // Check for wave completion
-            if (enemiesDestroyed >= enemiesPerWave) {
-                wave++;
-                enemiesDestroyed = 0;
-                enemiesPerWave = 5 + wave * 2;
+        // Upgrade speed (from shop)
+        function upgradeSpeedFromShop() {
+            if (score >= speedUpgradeCost) {
+                score -= speedUpgradeCost;
+                speedLevel++;
+                speedUpgradeCost = Math.floor(speedUpgradeCost * 1.5);
                 updateUI();
             }
         }
         
+        // Restore health (from shop)
+        function restoreHealthFromShop() {
+            if (score >= healthRestoreCost && health < maxHealth) {
+                score -= healthRestoreCost;
+                health = Math.min(health + 10, maxHealth);
+                updateUI();
+            }
+        }
+        
+        // Spawn enemies with endless mode support
+        let spawnTimer = 0;
+        let bossSpawned = false;
+        function spawnEnemies() {
+            spawnTimer++;
+            
+            // Don't spawn regular enemies during boss fight
+            if (wave === 4) {
+                // Only spawn one boss per wave 4
+                if (!bossSpawned) {
+                    createEnemy();
+                    bossSpawned = true;
+                }
+                return;
+            }
+            
+            // Reset boss spawn flag when not in wave 4
+            if (wave !== 4) {
+                bossSpawned = false;
+            }
+            
+            // Adjust spawn rate for endless mode
+            let spawnRate = 60 - wave * 5;
+            if (wave > 4) {
+                // In endless mode, increase spawn rate progressively
+                const endlessWave = wave - 4;
+                spawnRate = Math.max(20, 60 - (3 * 5) - (endlessWave * 5)); // Minimum 20 frames between spawns
+            }
+            
+            if (spawnTimer > spawnRate) {
+                createEnemy();
+                spawnTimer = 0;
+            }
+            
+            // Check for wave completion (only for regular mode)
+            if (wave <= 4 && enemiesDestroyed >= enemiesPerWave) {
+                wave++;
+                enemiesDestroyed = 0;
+                enemiesPerWave = 5 + wave * 2;
+                bossSpawned = false; // Reset for next wave 4
+                updateUI();
+            }
+        }
+        
+        // Sprint system
+        let isSprinting = false;
+        let sprintCooldown = 0;
+        let sprintDuration = 0;
+        const SPRINT_MAX_DURATION = 300; // 5 seconds at 60fps
+        const SPRINT_MAX_COOLDOWN = 300; // 5 seconds at 60fps
+        
         // Handle player input
         function handleInput() {
+            // Calculate current speed (with sprint bonus)
+            let currentSpeed = player.speed;
+            if (isSprinting && sprintDuration > 0) {
+                currentSpeed *= 1.5; // 50% speed boost when sprinting
+                sprintDuration--;
+                if (sprintDuration <= 0) {
+                    isSprinting = false;
+                    sprintCooldown = SPRINT_MAX_COOLDOWN;
+                }
+            } else if (sprintCooldown > 0) {
+                sprintCooldown--;
+            }
+            
             // WASD movement
             if (keys['w'] || keys['W']) {
-                player.y = Math.max(0, player.y - player.speed);
+                player.y = Math.max(0, player.y - currentSpeed);
             }
             if (keys['s'] || keys['S']) {
-                player.y = Math.min(canvas.height - player.height, player.y + player.speed);
+                player.y = Math.min(canvas.height - player.height, player.y + currentSpeed);
             }
             if (keys['a'] || keys['A']) {
-                player.x = Math.max(0, player.x - player.speed);
+                player.x = Math.max(0, player.x - currentSpeed);
             }
             if (keys['d'] || keys['D']) {
-                player.x = Math.min(canvas.width - player.width, player.x + player.speed);
+                player.x = Math.min(canvas.width - player.width, player.x + currentSpeed);
+            }
+            
+            // Sprint with shift
+            if ((keys['Shift'] || keys['shift']) && !isSprinting && sprintCooldown <= 0) {
+                isSprinting = true;
+                sprintDuration = SPRINT_MAX_DURATION;
             }
             
             // Auto-shoot when mouse is held down
             if (mouseDown) {
                 createBullet(mouseX, mouseY);
             }
+            
+            // Spacebar shooting
+            if (keys[' '] || keys['Space']) {
+                createBullet(mouseX, mouseY);
+            }
+        }
+        
+        // Draw HUD on canvas (optimized)
+        function drawHUD() {
+            // Draw HUD background bar
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+            ctx.fillRect(0, 0, canvas.width, 60);
+            
+            // Draw HUD border
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(0, 60);
+            ctx.lineTo(canvas.width, 60);
+            ctx.stroke();
+            
+            // Calculate positions for HUD items
+            const itemWidth = canvas.width / 4;
+            const centerY = 30;
+            
+            // Set font once for all text
+            ctx.font = 'bold 12px Courier New';
+            ctx.textAlign = 'left';
+            
+            // Draw SCORE
+            ctx.fillStyle = '#0ff';
+            ctx.fillText('SCORE:', 20, centerY - 8);
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Courier New';
+            ctx.fillText(score.toString(), 80, centerY - 8);
+            
+            // Draw HEALTH
+            ctx.fillStyle = '#0ff';
+            ctx.font = 'bold 12px Courier New';
+            ctx.fillText('HEALTH:', itemWidth + 20, centerY - 8);
+            
+            // Draw health bar
+            const healthBarX = itemWidth + 80;
+            const healthBarY = centerY - 12;
+            const healthBarWidth = 80;
+            const healthBarHeight = 16;
+            const healthPercent = Math.max(0, health / maxHealth);
+            
+            // Health bar background
+            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+            ctx.fillRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
+            
+            // Health bar fill with color based on health
+            if (healthPercent > 0.6) {
+                ctx.fillStyle = '#00ff00';
+            } else if (healthPercent > 0.3) {
+                ctx.fillStyle = '#ffaa00';
+            } else {
+                ctx.fillStyle = '#ff3333';
+            }
+            ctx.fillRect(healthBarX, healthBarY, healthBarWidth * healthPercent, healthBarHeight);
+            
+            // Health bar border
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
+            
+            // Health text (small, no shadow)
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 8px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${Math.max(0, health)}/${maxHealth}`, healthBarX + healthBarWidth / 2, centerY - 2);
+            
+            // Draw WAVE
+            ctx.fillStyle = '#0ff';
+            ctx.font = 'bold 12px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText('WAVE:', itemWidth * 2 + 20, centerY - 8);
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Courier New';
+            ctx.fillText(wave.toString(), itemWidth * 2 + 80, centerY - 8);
+            
+            // Draw RANGE
+            ctx.fillStyle = '#0ff';
+            ctx.font = 'bold 12px Courier New';
+            ctx.fillText('RANGE:', itemWidth * 3 + 20, centerY - 8);
+            
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 16px Courier New';
+            ctx.fillText(shootingRange + 'px', itemWidth * 3 + 80, centerY - 8);
         }
         
         // Game loop
@@ -1190,6 +1524,7 @@
             
             handleInput();
             updateBullets();
+            updateBossBullets();
             updateEnemies();
             updateParticles();
             spawnEnemies();
@@ -1198,24 +1533,69 @@
             drawAimingLine();
             drawPlayer();
             drawBullets();
+            drawBossBullets();
             drawEnemies();
             drawParticles();
+            drawHUD();
             
             requestAnimationFrame(gameLoop);
+        }
+        
+        // Start endless mode
+        function startEndlessMode() {
+            gameRunning = true;
+            score = 0;
+            health = maxHealth;
+            wave = 5; // Start in endless mode
+            enemiesDestroyed = 0;
+            enemiesPerWave = 5;
+            rangeLevel = 1;
+            shootingRange = 100;
+            rangeUpgradeCost = 50;
+            speedLevel = 1;
+            speedUpgradeCost = 30;
+            healthRestoreCost = 20;
+            bossSpawned = false;
+            isSprinting = false;
+            sprintCooldown = 0;
+            sprintDuration = 0;
+            bullets = [];
+            bossBullets = [];
+            enemies = [];
+            particles = [];
+            
+            // Reset player position based on canvas size
+            player.x = canvas.width / 2 - 20;
+            player.y = canvas.height - 80;
+            
+            updateUI();
+            
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameOver').style.display = 'none';
+            
+            gameLoop();
         }
         
         // Start game
         function startGame() {
             gameRunning = true;
             score = 0;
-            lives = 3;
+            health = maxHealth;
             wave = 1;
             enemiesDestroyed = 0;
             enemiesPerWave = 5;
             rangeLevel = 1;
             shootingRange = 100;
             rangeUpgradeCost = 50;
+            speedLevel = 1;
+            speedUpgradeCost = 30;
+            healthRestoreCost = 20;
+            bossSpawned = false;
+            isSprinting = false;
+            sprintCooldown = 0;
+            sprintDuration = 0;
             bullets = [];
+            bossBullets = [];
             enemies = [];
             particles = [];
             
@@ -1241,7 +1621,11 @@
         
         // Event listeners
         document.addEventListener('keydown', (e) => {
-            keys[e.key] = true;
+            // Only track keys we actually use
+            const key = e.key.toLowerCase();
+            if (['w', 'a', 's', 'd', 'shift', ' '].includes(key)) {
+                keys[key] = true;
+            }
             
             // Pause with ESC
             if (e.key === 'Escape' && gameRunning && !gamePaused) {
@@ -1252,7 +1636,11 @@
         });
         
         document.addEventListener('keyup', (e) => {
-            keys[e.key] = false;
+            // Only untrack keys we actually use
+            const key = e.key.toLowerCase();
+            if (['w', 'a', 's', 'd', 'shift', ' '].includes(key)) {
+                keys[key] = false;
+            }
         });
         
         // Mouse event listeners
@@ -1278,6 +1666,7 @@
         });
         
         document.getElementById('startBtn').addEventListener('click', startGame);
+        document.getElementById('endlessBtn').addEventListener('click', startEndlessMode);
         document.getElementById('restartBtn').addEventListener('click', startGame);
         
         // Pause menu buttons
@@ -1287,6 +1676,8 @@
         
         // Shop buttons
         document.getElementById('shopUpgradeRangeBtn').addEventListener('click', upgradeRangeFromShop);
+        document.getElementById('shopUpgradeSpeedBtn').addEventListener('click', upgradeSpeedFromShop);
+        document.getElementById('shopRestoreHealthBtn').addEventListener('click', restoreHealthFromShop);
         document.getElementById('backToPauseBtn').addEventListener('click', backToPause);
         
         // Initialize
