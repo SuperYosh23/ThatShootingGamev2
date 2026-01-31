@@ -178,43 +178,35 @@
             color: #fff;
             text-align: center;
             z-index: 40;
-            background: rgba(0, 0, 0, 0.95);
-            padding: 40px;
-            border-radius: 20px;
+            background: #000;
+            padding: 30px;
             border: 2px solid #0ff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
             display: none;
         }
         
         #pauseScreen h2 {
-            font-size: 48px;
-            margin: 0 0 30px 0;
+            font-size: 32px;
+            margin: 0 0 20px 0;
             color: #0ff;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-            font-weight: 700;
+            font-weight: bold;
         }
         
         .pause-btn {
-            background: linear-gradient(135deg, #0ff, #088);
-            border: none;
-            padding: 15px 40px;
-            font-size: 18px;
-            font-weight: 600;
+            background: #000;
+            border: 2px solid #0ff;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            margin: 10px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            color: #000;
-            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
+            margin: 8px;
+            color: #0ff;
             display: block;
-            width: 250px;
+            width: 200px;
         }
         
         .pause-btn:hover {
-            background: linear-gradient(135deg, #fff, #0ff);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 30px rgba(0, 255, 255, 0.6);
+            background: #0ff;
+            color: #000;
         }
         
         #shopScreen {
@@ -225,28 +217,23 @@
             color: #fff;
             text-align: center;
             z-index: 45;
-            background: rgba(0, 0, 0, 0.95);
-            padding: 40px;
-            border-radius: 20px;
+            background: #000;
+            padding: 30px;
             border: 2px solid #ffcc00;
-            box-shadow: 0 0 30px rgba(255, 204, 0, 0.5);
-            backdrop-filter: blur(10px);
             display: none;
         }
         
         #shopScreen h2 {
-            font-size: 48px;
-            margin: 0 0 30px 0;
+            font-size: 32px;
+            margin: 0 0 20px 0;
             color: #ffcc00;
-            text-shadow: 0 0 20px rgba(255, 204, 0, 0.8);
-            font-weight: 700;
+            font-weight: bold;
         }
         
         .shop-item {
-            background: rgba(255, 204, 0, 0.1);
+            background: #000;
             border: 1px solid #ffcc00;
-            border-radius: 10px;
-            padding: 20px;
+            padding: 15px;
             margin: 15px 0;
             text-align: left;
         }
@@ -254,7 +241,7 @@
         .shop-item h3 {
             color: #ffcc00;
             margin: 0 0 10px 0;
-            font-size: 20px;
+            font-size: 18px;
         }
         
         .shop-item p {
@@ -264,23 +251,19 @@
         }
         
         .shop-btn {
-            background: linear-gradient(135deg, #ffcc00, #ff9900);
-            border: none;
+            background: #000;
+            border: 2px solid #ffcc00;
             padding: 10px 20px;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 14px;
+            font-weight: bold;
             cursor: pointer;
             margin-top: 10px;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            color: #000;
-            box-shadow: 0 2px 10px rgba(255, 204, 0, 0.3);
+            color: #ffcc00;
         }
         
         .shop-btn:hover:not(:disabled) {
-            background: linear-gradient(135deg, #fff, #ffcc00);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 20px rgba(255, 204, 0, 0.5);
+            background: #ffcc00;
+            color: #000;
         }
         
         .shop-btn:disabled {
@@ -288,17 +271,18 @@
             color: #666;
             cursor: not-allowed;
             opacity: 0.5;
-            transform: none;
         }
         
         .back-btn {
-            background: linear-gradient(135deg, #ff3333, #cc0000);
-            color: #fff;
+            background: #000;
+            border: 2px solid #ff3333;
+            color: #ff3333;
             margin-top: 20px;
         }
         
         .back-btn:hover {
-            background: linear-gradient(135deg, #ff6666, #ff3333);
+            background: #ff3333;
+            color: #000;
         }
         
         #gameOver {
@@ -310,46 +294,38 @@
             text-align: center;
             display: none;
             z-index: 20;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 40px;
-            border-radius: 20px;
+            background: #000;
+            padding: 30px;
             border: 2px solid #ff3333;
-            box-shadow: 0 0 30px rgba(255, 51, 51, 0.5);
-            backdrop-filter: blur(10px);
         }
         
         #gameOver h2 {
-            font-size: 48px;
+            font-size: 32px;
             margin: 0 0 20px 0;
             color: #ff3333;
-            text-shadow: 0 0 20px rgba(255, 51, 51, 0.8);
-            font-weight: 700;
+            font-weight: bold;
         }
         
         #gameOver p {
-            font-size: 24px;
-            margin: 15px 0;
+            font-size: 18px;
+            margin: 10px 0;
             color: #ccc;
         }
         
         #restartBtn {
-            background: linear-gradient(135deg, #ff3333, #cc0000);
-            border: none;
-            padding: 15px 40px;
-            font-size: 20px;
-            font-weight: 600;
+            background: #000;
+            border: 2px solid #ff3333;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            color: #fff;
-            box-shadow: 0 4px 20px rgba(255, 51, 51, 0.4);
+            margin-top: 15px;
+            color: #ff3333;
         }
         
         #restartBtn:hover {
-            background: linear-gradient(135deg, #ff6666, #ff3333);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 30px rgba(255, 51, 51, 0.6);
+            background: #ff3333;
+            color: #000;
         }
         
         #startScreen {
@@ -360,25 +336,21 @@
             color: #fff;
             text-align: center;
             z-index: 30;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 40px;
-            border-radius: 20px;
+            background: #000;
+            padding: 30px;
             border: 2px solid #0ff;
-            box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
-            backdrop-filter: blur(10px);
         }
         
         #startScreen h1 {
-            font-size: 48px;
-            margin: 0 0 30px 0;
+            font-size: 36px;
+            margin: 0 0 20px 0;
             color: #0ff;
-            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
-            font-weight: 700;
+            font-weight: bold;
         }
         
         #startScreen p {
-            font-size: 18px;
-            margin: 15px 0;
+            font-size: 16px;
+            margin: 10px 0;
             color: #ccc;
         }
         
@@ -390,41 +362,35 @@
         }
         
         #startBtn, #endlessBtn {
-            background: linear-gradient(135deg, #0ff, #088);
-            border: none;
-            padding: 15px 40px;
-            font-size: 20px;
-            font-weight: 600;
+            background: #000;
+            border: 2px solid #0ff;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            border-radius: 10px;
-            transition: all 0.3s ease;
-            color: #000;
-            box-shadow: 0 4px 20px rgba(0, 255, 255, 0.4);
+            color: #0ff;
         }
         
         #endlessBtn {
-            background: linear-gradient(135deg, #ff6b6b, #ff3333);
-            box-shadow: 0 4px 20px rgba(255, 51, 51, 0.4);
+            border-color: #ff3333;
+            color: #ff3333;
         }
         
         #startBtn:hover {
-            background: linear-gradient(135deg, #fff, #0ff);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 30px rgba(0, 255, 255, 0.6);
+            background: #0ff;
+            color: #000;
         }
         
         #endlessBtn:hover {
-            background: linear-gradient(135deg, #fff, #ff6b6b);
-            transform: translateY(-3px);
-            box-shadow: 0 6px 30px rgba(255, 51, 51, 0.6);
+            background: #ff3333;
+            color: #000;
         }
         
         .controls-info {
-            background: rgba(0, 255, 255, 0.1);
+            background: #000;
             border: 1px solid #0ff;
-            border-radius: 10px;
-            padding: 20px;
-            margin: 20px 0;
+            padding: 15px;
+            margin: 15px 0;
         }
         
         .enemy-color {
@@ -438,78 +404,6 @@
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
-        <div id="pauseScreen">
-            <h2>PAUSED</h2>
-            <div class="enemy-info">
-                <div class="enemy-title">ENEMY TYPES</div>
-                <div class="enemy-item">
-                    <span>Basic (10 pts)</span>
-                    <div class="enemy-color" style="background: #ff3333;"></div>
-                </div>
-                <div class="enemy-item">
-                    <span>Fast (20 pts)</span>
-                    <div class="enemy-color" style="background: #ff9933;"></div>
-                </div>
-                <div class="enemy-item">
-                    <span>Heavy (50 pts)</span>
-                    <div class="enemy-color" style="background: #9933ff;"></div>
-                </div>
-            </div>
-            <button class="pause-btn" id="resumeBtn">Resume Game</button>
-            <button class="pause-btn" id="shopBtn">Shop</button>
-            <button class="pause-btn" id="mainMenuBtn">Main Menu</button>
-        </div>
-        
-        <div id="shopScreen">
-            <h2>SHOP</h2>
-            <div class="shop-item">
-                <h3>Shooting Range Upgrade</h3>
-                <p>Current Level: <span id="shopRangeLevel">1</span></p>
-                <p>Current Range: <span id="shopRange">100px</span></p>
-                <p>Increase your shooting range by 50px</p>
-                <button class="shop-btn" id="shopUpgradeRangeBtn">Upgrade (50 pts)</button>
-            </div>
-            <div class="shop-item">
-                <h3>Speed Upgrade</h3>
-                <p>Current Level: <span id="shopSpeedLevel">1</span></p>
-                <p>Increase movement speed by 5%</p>
-                <button class="shop-btn" id="shopUpgradeSpeedBtn">Upgrade (30 pts)</button>
-            </div>
-            <div class="shop-item">
-                <h3>Health Restoration</h3>
-                <p>Current Health: <span id="shopCurrentHealth">100</span>/<span id="shopMaxHealth">100</span></p>
-                <p>Restore 10 health points</p>
-                <button class="shop-btn" id="shopRestoreHealthBtn">Heal (20 pts)</button>
-            </div>
-            <button class="shop-btn back-btn" id="backToPauseBtn">Back to Pause</button>
-        </div>
-        
-        <div id="startScreen">
-            <h1>That Shooting Game v2</h1>
-            <div class="controls-info">
-                <p>🎮 Move with WASD</p>
-                <p>🖱️ Move mouse to aim</p>
-                <p>🔫 Click to shoot (bullets stop at range limit)</p>
-                <p>⬆️ Upgrade your range with points!</p>
-                <p>⏸️ Press ESC to pause</p>
-            </div>
-            <div class="controls-info">
-                <p style="color: #ff3333;">🔺 Basic: Red triangle - 10 points</p>
-                <p style="color: #ff9933;">♦ Fast: Orange diamond - 20 points</p>
-                <p style="color: #9933ff;">▬ Heavy: Purple square - 50 points (3 hits)</p>
-                <p style="color: #ffff00;">💡 Upgrade your shooting range to hit more enemies!</p>
-            </div>
-            <div class="menu-buttons">
-                <button id="startBtn">START GAME</button>
-                <button id="endlessBtn">ENDLESS MODE</button>
-            </div>
-        </div>
-        <div id="gameOver">
-            <h2>GAME OVER</h2>
-            <p>Final Score: <span id="finalScore">0</span></p>
-            <p>Waves Survived: <span id="finalWave">1</span></p>
-            <button id="restartBtn">PLAY AGAIN</button>
-        </div>
     </div>
 
     <script>
@@ -543,8 +437,10 @@
         resizeCanvas();
         
         // Game state
-        let gameRunning = false;
-        let gamePaused = false;
+        let gameState = 'menu'; // 'menu', 'playing', 'paused', 'shop', 'gameOver'
+        let menuSelection = 0; // 0 = Start Game, 1 = Endless Mode
+        let pauseSelection = 0; // 0 = Resume, 1 = Shop, 2 = Main Menu
+        let shopSelection = 0; // 0 = Range, 1 = Speed, 2 = Health, 3 = Back
         let score = 0;
         let health = 100;
         let maxHealth = 100;
@@ -570,7 +466,7 @@
             y: canvas.height - 80,
             width: 40,
             height: 40,
-            baseSpeed: 8,
+            baseSpeed: 6,
             get speed() { return this.baseSpeed * (1 + (speedLevel - 1) * 0.05); },
             canShoot: true,
             shootCooldown: 0
@@ -616,8 +512,8 @@
             const dy = mouseY - (player.y + player.height / 2);
             const distance = Math.sqrt(dx * dx + dy * dy);
             
-            ctx.strokeStyle = 'rgba(0, 255, 0, 0.8)';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 3;
             ctx.setLineDash([10, 5]);
             ctx.beginPath();
             ctx.moveTo(player.x + player.width / 2, player.y + player.height / 2);
@@ -721,8 +617,8 @@
                 const dx = targetX - startX;
                 const dy = targetY - startY;
                 const angle = Math.atan2(dy, dx);
-                const vx = Math.cos(angle) * 12;
-                const vy = Math.sin(angle) * 12;
+                const vx = Math.cos(angle) * 9;
+                const vy = Math.sin(angle) * 9;
                 
                 bullets.push({
                     x: startX - 2,
@@ -740,10 +636,9 @@
             }
         }
         
-        // Draw bullets (optimized)
+        // Draw bullets
         function drawBullets() {
             bullets.forEach(bullet => {
-                // Simple solid color bullet for performance
                 ctx.fillStyle = '#ffff00';
                 ctx.fillRect(bullet.x, bullet.y, bullet.width, bullet.height);
             });
@@ -822,14 +717,14 @@
                 // Base speeds with endless progression
                 switch(type) {
                     case 'basic':
-                        baseSpeed = 3;
+                        baseSpeed = 2.5;
                         enemy.speed = baseSpeed * speedMultiplier;
                         enemy.health = 1;
                         enemy.color = '#ff3333';
                         enemy.points = 10;
                         break;
                     case 'fast':
-                        baseSpeed = 6;
+                        baseSpeed = 5;
                         enemy.speed = baseSpeed * speedMultiplier;
                         enemy.health = 1;
                         enemy.color = '#ff9933';
@@ -838,7 +733,7 @@
                         enemy.height = 30;
                         break;
                     case 'heavy':
-                        baseSpeed = 1.5;
+                        baseSpeed = 1.2;
                         enemy.speed = baseSpeed * speedMultiplier;
                         enemy.health = 3;
                         enemy.color = '#9933ff';
@@ -912,7 +807,7 @@
                 width: 150,
                 height: 100,
                 type: 'boss',
-                speed: 1.5,
+                speed: 1.2,
                 health: 50,
                 maxHealth: 50,
                 color: '#ff00ff',
@@ -933,7 +828,7 @@
                     width: 6,
                     height: 12,
                     vx: i * 2, // Spread bullets horizontally
-                    vy: 6,
+                    vy: 4.5,
                     color: '#ff00ff'
                 });
             }
@@ -989,7 +884,7 @@
                     
                     // Simplified boss health bar
                     const healthPercent = enemy.health / enemy.maxHealth;
-                    ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                    ctx.fillStyle = '#400000';
                     ctx.fillRect(enemy.x, enemy.y - 15, enemy.width, 8);
                     
                     ctx.fillStyle = healthPercent > 0.5 ? '#00ff00' : healthPercent > 0.25 ? '#ffaa00' : '#ff3333';
@@ -1050,14 +945,14 @@
                         // Health bar for heavy enemies
                         if (enemy.health > 1) {
                             const healthPercent = enemy.health / 3;
-                            ctx.fillStyle = 'rgba(255, 0, 0, 0.5)';
+                            ctx.fillStyle = '#400000';
                             ctx.fillRect(enemy.x, enemy.y - 12, enemy.width, 4);
                             
                             ctx.fillStyle = healthPercent > 0.5 ? '#00ff00' : healthPercent > 0.25 ? '#ffaa00' : '#ff3333';
                             ctx.fillRect(enemy.x, enemy.y - 12, enemy.width * healthPercent, 4);
                             
                             ctx.strokeStyle = '#ffffff';
-                            ctx.lineWidth = 1;
+                            ctx.lineWidth = 2;
                             ctx.strokeRect(enemy.x, enemy.y - 12, enemy.width, 4);
                         }
                     }
@@ -1154,6 +1049,36 @@
             });
         }
         
+        // Draw motion blur layer for specific elements
+        function drawMotionBlurLayer() {
+            ctx.fillStyle = 'rgba(0, 4, 40, 0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            drawStars();
+            drawBullets();
+            
+            // Draw only basic and fast enemies with motion blur
+            enemies.forEach(enemy => {
+                if (enemy.type === 'basic') {
+                    ctx.fillStyle = '#ff3333';
+                    ctx.beginPath();
+                    ctx.moveTo(enemy.x + enemy.width / 2, enemy.y + enemy.height);
+                    ctx.lineTo(enemy.x, enemy.y);
+                    ctx.lineTo(enemy.x + enemy.width, enemy.y);
+                    ctx.closePath();
+                    ctx.fill();
+                } else if (enemy.type === 'fast') {
+                    ctx.fillStyle = '#ff9933';
+                    ctx.beginPath();
+                    ctx.moveTo(enemy.x + enemy.width / 2, enemy.y);
+                    ctx.lineTo(enemy.x + enemy.width, enemy.y + enemy.height / 2);
+                    ctx.lineTo(enemy.x + enemy.width / 2, enemy.y + enemy.height);
+                    ctx.lineTo(enemy.x, enemy.y + enemy.height / 2);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+            });
+        }
+        
         // Draw stars
         function drawStars() {
             ctx.fillStyle = '#ffffff';
@@ -1193,7 +1118,6 @@
                             enemies.splice(enemyIndex, 1);
                             score += enemy.points;
                             enemiesDestroyed++;
-                            updateUI();
                         }
                     }
                 });
@@ -1208,7 +1132,6 @@
                     
                     bossBullets.splice(bulletIndex, 1);
                     health -= 10; // Boss bullets do 10 damage
-                    updateUI();
                     
                     if (health <= 0) {
                         gameOver();
@@ -1226,74 +1149,12 @@
                     createExplosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2, enemy.color);
                     enemies.splice(index, 1);
                     health -= 25; // Take 25 damage per collision
-                    updateUI();
                     
                     if (health <= 0) {
                         gameOver();
                     }
                 }
             });
-        }
-        
-        // Update UI (only shop elements now, HUD is drawn on canvas)
-        function updateUI() {
-            // Update shop UI
-            document.getElementById('shopRangeLevel').textContent = rangeLevel;
-            document.getElementById('shopRange').textContent = shootingRange + 'px';
-            document.getElementById('shopSpeedLevel').textContent = speedLevel;
-            document.getElementById('shopCurrentHealth').textContent = Math.min(health, maxHealth);
-            document.getElementById('shopMaxHealth').textContent = maxHealth;
-            
-            // Update shop buttons
-            const rangeUpgradeBtn = document.getElementById('shopUpgradeRangeBtn');
-            rangeUpgradeBtn.textContent = `Upgrade (${rangeUpgradeCost} pts)`;
-            rangeUpgradeBtn.disabled = score < rangeUpgradeCost;
-            
-            const speedUpgradeBtn = document.getElementById('shopUpgradeSpeedBtn');
-            speedUpgradeBtn.textContent = `Upgrade (${speedUpgradeCost} pts)`;
-            speedUpgradeBtn.disabled = score < speedUpgradeCost;
-            
-            const healthRestoreBtn = document.getElementById('shopRestoreHealthBtn');
-            healthRestoreBtn.textContent = `Heal (${healthRestoreCost} pts)`;
-            healthRestoreBtn.disabled = score < healthRestoreCost || health >= maxHealth;
-        }
-        
-        // Pause game
-        function pauseGame() {
-            if (!gameRunning || gamePaused) return;
-            gamePaused = true;
-            document.getElementById('pauseScreen').style.display = 'block';
-        }
-        
-        // Resume game
-        function resumeGame() {
-            if (!gameRunning || !gamePaused) return;
-            gamePaused = false;
-            document.getElementById('pauseScreen').style.display = 'none';
-            document.getElementById('shopScreen').style.display = 'none';
-            gameLoop();
-        }
-        
-        // Open shop
-        function openShop() {
-            document.getElementById('pauseScreen').style.display = 'none';
-            document.getElementById('shopScreen').style.display = 'block';
-            updateUI();
-        }
-        
-        // Back to pause menu
-        function backToPause() {
-            document.getElementById('shopScreen').style.display = 'none';
-            document.getElementById('pauseScreen').style.display = 'block';
-        }
-        
-        // Return to main menu
-        function returnToMainMenu() {
-            gameRunning = false;
-            gamePaused = false;
-            document.getElementById('pauseScreen').style.display = 'none';
-            document.getElementById('shopScreen').style.display = 'none';
-            document.getElementById('startScreen').style.display = 'block';
         }
         
         // Upgrade shooting range (from shop)
@@ -1303,7 +1164,6 @@
                 rangeLevel++;
                 shootingRange += 50;
                 rangeUpgradeCost = Math.floor(rangeUpgradeCost * 1.5);
-                updateUI();
             }
         }
         
@@ -1313,7 +1173,6 @@
                 score -= speedUpgradeCost;
                 speedLevel++;
                 speedUpgradeCost = Math.floor(speedUpgradeCost * 1.5);
-                updateUI();
             }
         }
         
@@ -1322,7 +1181,6 @@
             if (score >= healthRestoreCost && health < maxHealth) {
                 score -= healthRestoreCost;
                 health = Math.min(health + 10, maxHealth);
-                updateUI();
             }
         }
         
@@ -1366,7 +1224,6 @@
                 enemiesDestroyed = 0;
                 enemiesPerWave = 5 + wave * 2;
                 bossSpawned = false; // Reset for next wave 4
-                updateUI();
             }
         }
         
@@ -1427,7 +1284,7 @@
         // Draw HUD on canvas (optimized)
         function drawHUD() {
             // Draw HUD background bar
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.95)';
             ctx.fillRect(0, 0, canvas.width, 60);
             
             // Draw HUD border
@@ -1467,7 +1324,7 @@
             const healthPercent = Math.max(0, health / maxHealth);
             
             // Health bar background
-            ctx.fillStyle = 'rgba(255, 0, 0, 0.3)';
+            ctx.fillStyle = '#400000';
             ctx.fillRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
             
             // Health bar fill with color based on health
@@ -1482,7 +1339,7 @@
             
             // Health bar border
             ctx.strokeStyle = '#0ff';
-            ctx.lineWidth = 1;
+            ctx.lineWidth = 2;
             ctx.strokeRect(healthBarX, healthBarY, healthBarWidth, healthBarHeight);
             
             // Health text (small, no shadow)
@@ -1511,40 +1368,317 @@
             ctx.fillText(shootingRange + 'px', itemWidth * 3 + 80, centerY - 8);
         }
         
-        // Game loop
-        function gameLoop() {
-            if (!gameRunning || gamePaused) return;
-            
-            // Clear canvas completely (no trail effect)
-            ctx.fillStyle = 'rgba(0, 4, 40, 1)';
+        // Draw menu screen on canvas
+        function drawMenu() {
+            // Clear canvas fully for sharp menu
+            ctx.fillStyle = 'rgb(0, 4, 40)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Update and draw everything
-            updateStars();
+            // Draw stars
             drawStars();
             
-            handleInput();
-            updateBullets();
-            updateBossBullets();
-            updateEnemies();
-            updateParticles();
-            spawnEnemies();
-            checkCollisions();
+            // Title
+            ctx.fillStyle = '#0ff';
+            ctx.font = 'bold 48px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('THAT SHOOTING GAME v2', canvas.width / 2, 100);
             
-            drawAimingLine();
-            drawPlayer();
-            drawBullets();
-            drawBossBullets();
-            drawEnemies();
-            drawParticles();
-            drawHUD();
+            // Controls info
+            ctx.fillStyle = '#ccc';
+            ctx.font = '16px Courier New';
+            ctx.fillText('Move with WASD | Mouse to aim | Click to shoot', canvas.width / 2, 150);
+            ctx.fillText('Press ESC to pause | Press / for commands', canvas.width / 2, 180);
+            
+            // Enemy info
+            ctx.fillStyle = '#ff3333';
+            ctx.fillText('Basic: 10 pts', canvas.width / 2 - 150, 220);
+            ctx.fillStyle = '#ff9933';
+            ctx.fillText('Fast: 20 pts', canvas.width / 2, 220);
+            ctx.fillStyle = '#9933ff';
+            ctx.fillText('Heavy: 50 pts', canvas.width / 2 + 150, 220);
+            
+            // Menu options
+            const options = ['START GAME', 'ENDLESS MODE'];
+            const colors = ['#0ff', '#ff3333'];
+            
+            options.forEach((option, index) => {
+                const y = 300 + index * 60;
+                
+                // Highlight selected option
+                if (index === menuSelection) {
+                    ctx.fillStyle = colors[index];
+                    ctx.fillRect(canvas.width / 2 - 150, y - 25, 300, 50);
+                    ctx.fillStyle = '#000';
+                } else {
+                    ctx.strokeStyle = colors[index];
+                    ctx.strokeRect(canvas.width / 2 - 150, y - 25, 300, 50);
+                    ctx.fillStyle = colors[index];
+                }
+                
+                ctx.font = 'bold 24px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(option, canvas.width / 2, y + 5);
+            });
+            
+            // Instructions
+            ctx.fillStyle = '#666';
+            ctx.font = '14px Courier New';
+            ctx.fillText('Use W/S or UP/DOWN arrows to select, ENTER to choose', canvas.width / 2, canvas.height - 50);
+        }
+        
+        // Draw pause screen on canvas
+        function drawPause() {
+            // Darken background fully for sharp overlay
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Pause title
+            ctx.fillStyle = '#0ff';
+            ctx.font = 'bold 48px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('PAUSED', canvas.width / 2, 150);
+            
+            // Enemy info
+            ctx.fillStyle = '#ccc';
+            ctx.font = '16px Courier New';
+            ctx.fillText('ENEMY TYPES', canvas.width / 2, 200);
+            ctx.fillStyle = '#ff3333';
+            ctx.fillText('Basic: 10 pts', canvas.width / 2 - 150, 230);
+            ctx.fillStyle = '#ff9933';
+            ctx.fillText('Fast: 20 pts', canvas.width / 2, 230);
+            ctx.fillStyle = '#9933ff';
+            ctx.fillText('Heavy: 50 pts', canvas.width / 2 + 150, 230);
+            
+            // Pause options
+            const options = ['RESUME GAME', 'SHOP', 'MAIN MENU'];
+            
+            options.forEach((option, index) => {
+                const y = 300 + index * 60;
+                
+                // Highlight selected option
+                if (index === pauseSelection) {
+                    ctx.fillStyle = '#0ff';
+                    ctx.fillRect(canvas.width / 2 - 150, y - 25, 300, 50);
+                    ctx.fillStyle = '#000';
+                } else {
+                    ctx.strokeStyle = '#0ff';
+                    ctx.strokeRect(canvas.width / 2 - 150, y - 25, 300, 50);
+                    ctx.fillStyle = '#0ff';
+                }
+                
+                ctx.font = 'bold 20px Courier New';
+                ctx.textAlign = 'center';
+                ctx.fillText(option, canvas.width / 2, y + 5);
+            });
+            
+            // Instructions
+            ctx.fillStyle = '#666';
+            ctx.font = '14px Courier New';
+            ctx.fillText('Use W/S or UP/DOWN arrows to select, ENTER to choose', canvas.width / 2, canvas.height - 50);
+        }
+        
+        // Draw shop screen on canvas
+        function drawShop() {
+            // Darken background fully for sharp overlay
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Shop title
+            ctx.fillStyle = '#ffcc00';
+            ctx.font = 'bold 48px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('SHOP', canvas.width / 2, 100);
+            
+            // Shop items
+            const items = [
+                {
+                    name: 'SHOOTING RANGE',
+                    desc: `Current: ${shootingRange}px | Cost: ${rangeUpgradeCost} pts`,
+                    affordable: score >= rangeUpgradeCost
+                },
+                {
+                    name: 'SPEED UPGRADE',
+                    desc: `Level: ${speedLevel} | Cost: ${speedUpgradeCost} pts`,
+                    affordable: score >= speedUpgradeCost
+                },
+                {
+                    name: 'HEALTH RESTORE',
+                    desc: `Health: ${health}/${maxHealth} | Cost: ${healthRestoreCost} pts`,
+                    affordable: score >= healthRestoreCost && health < maxHealth
+                }
+            ];
+            
+            items.forEach((item, index) => {
+                const y = 180 + index * 80;
+                
+                // Highlight selected item
+                if (index === shopSelection) {
+                    ctx.fillStyle = item.affordable ? '#ffcc00' : '#666';
+                    ctx.fillRect(100, y - 30, canvas.width - 200, 60);
+                    ctx.fillStyle = '#000';
+                } else {
+                    ctx.strokeStyle = item.affordable ? '#ffcc00' : '#666';
+                    ctx.strokeRect(100, y - 30, canvas.width - 200, 60);
+                    ctx.fillStyle = item.affordable ? '#ffcc00' : '#666';
+                }
+                
+                ctx.font = 'bold 18px Courier New';
+                ctx.textAlign = 'left';
+                ctx.fillText(item.name, 120, y);
+                
+                ctx.font = '14px Courier New';
+                ctx.fillText(item.desc, 120, y + 20);
+            });
+            
+            // Back button at bottom
+            const backY = canvas.height - 100;
+            if (shopSelection === 3) {
+                ctx.fillStyle = '#ff3333';
+                ctx.fillRect(canvas.width / 2 - 100, backY - 25, 200, 50);
+                ctx.fillStyle = '#000';
+            } else {
+                ctx.strokeStyle = '#ff3333';
+                ctx.strokeRect(canvas.width / 2 - 100, backY - 25, 200, 50);
+                ctx.fillStyle = '#ff3333';
+            }
+            
+            ctx.font = 'bold 18px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('BACK TO PAUSE', canvas.width / 2, backY + 5);
+            
+            // Instructions
+            ctx.fillStyle = '#666';
+            ctx.font = '14px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('Use W/S or UP/DOWN arrows to select, ENTER to purchase', canvas.width / 2, canvas.height - 50);
+        }
+        
+        // Draw game over screen on canvas
+        function drawGameOver() {
+            // Darken background fully for sharp overlay
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Game over title
+            ctx.fillStyle = '#ff3333';
+            ctx.font = 'bold 48px Courier New';
+            ctx.textAlign = 'center';
+            ctx.fillText('GAME OVER', canvas.width / 2, 150);
+            
+            // Stats
+            ctx.fillStyle = '#ccc';
+            ctx.font = '24px Courier New';
+            ctx.fillText(`Final Score: ${score}`, canvas.width / 2, 220);
+            ctx.fillText(`Waves Survived: ${wave}`, canvas.width / 2, 260);
+            
+            // Restart button
+            ctx.fillStyle = '#ff3333';
+            ctx.fillRect(canvas.width / 2 - 150, 320, 300, 60);
+            ctx.fillStyle = '#000';
+            ctx.font = 'bold 24px Courier New';
+            ctx.fillText('PLAY AGAIN', canvas.width / 2, 355);
+            
+            // Instructions
+            ctx.fillStyle = '#666';
+            ctx.font = '14px Courier New';
+            ctx.fillText('Press ENTER to play again or ESC for main menu', canvas.width / 2, canvas.height - 50);
+        }
+        
+        // Frame rate limiting
+        let lastTime = 0;
+        const targetFPS = 60;
+        const frameInterval = 1000 / targetFPS;
+        
+        // Main game loop
+        function gameLoop(currentTime) {
+            // Frame rate limiting
+            if (lastTime !== 0) {
+                const deltaTime = currentTime - lastTime;
+                if (deltaTime < frameInterval) {
+                    requestAnimationFrame(gameLoop);
+                    return;
+                }
+            }
+            lastTime = currentTime;
+            
+            // Clear canvas fully
+            ctx.fillStyle = 'rgb(0, 4, 40)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Draw based on game state
+            switch(gameState) {
+                case 'menu':
+                    drawMenu();
+                    break;
+                case 'playing':
+                    // Update game elements
+                    updateStars();
+                    handleInput();
+                    updateBullets();
+                    updateBossBullets();
+                    updateEnemies();
+                    updateParticles();
+                    spawnEnemies();
+                    checkCollisions();
+                    
+                    // Draw motion blur layer first
+                    drawMotionBlurLayer();
+                    
+                    // Draw sharp elements on top
+                    drawPlayer();
+                    drawBossBullets();
+                    drawEnemies();
+                    drawParticles();
+                    drawAimingLine();
+                    drawHUD();
+                    break;
+                case 'paused':
+                    // Draw game in background
+                    updateStars();
+                    drawStars();
+                    drawPlayer();
+                    drawEnemies();
+                    drawBullets();
+                    drawBossBullets();
+                    drawParticles();
+                    drawHUD();
+                    // Draw pause overlay
+                    drawPause();
+                    break;
+                case 'shop':
+                    // Draw game in background
+                    updateStars();
+                    drawStars();
+                    drawPlayer();
+                    drawEnemies();
+                    drawBullets();
+                    drawBossBullets();
+                    drawParticles();
+                    drawHUD();
+                    // Draw shop overlay
+                    drawShop();
+                    break;
+                case 'gameOver':
+                    // Draw game in background
+                    updateStars();
+                    drawStars();
+                    drawPlayer();
+                    drawEnemies();
+                    drawBullets();
+                    drawBossBullets();
+                    drawParticles();
+                    drawHUD();
+                    // Draw game over overlay
+                    drawGameOver();
+                    break;
+            }
             
             requestAnimationFrame(gameLoop);
         }
         
         // Start endless mode
         function startEndlessMode() {
-            gameRunning = true;
+            gameState = 'playing';
             score = 0;
             health = maxHealth;
             wave = 5; // Start in endless mode
@@ -1570,17 +1704,12 @@
             player.x = canvas.width / 2 - 20;
             player.y = canvas.height - 80;
             
-            updateUI();
-            
-            document.getElementById('startScreen').style.display = 'none';
-            document.getElementById('gameOver').style.display = 'none';
-            
             gameLoop();
         }
         
         // Start game
         function startGame() {
-            gameRunning = true;
+            gameState = 'playing';
             score = 0;
             health = maxHealth;
             wave = 1;
@@ -1606,49 +1735,111 @@
             player.x = canvas.width / 2 - 20;
             player.y = canvas.height - 80;
             
-            updateUI();
-            
-            document.getElementById('startScreen').style.display = 'none';
-            document.getElementById('gameOver').style.display = 'none';
-            
             gameLoop();
         }
         
         // Game over
         function gameOver() {
-            gameRunning = false;
-            document.getElementById('finalScore').textContent = score;
-            document.getElementById('finalWave').textContent = wave;
-            document.getElementById('gameOver').style.display = 'block';
+            gameState = 'gameOver';
         }
         
         // Event listeners
         document.addEventListener('keydown', (e) => {
-            // Only track keys we actually use
             const key = e.key.toLowerCase();
-            if (['w', 'a', 's', 'd', 'shift', ' '].includes(key)) {
-                keys[key] = true;
-            }
             
-            // Track shift key state
-            if (e.key === 'Shift') {
-                shiftPressed = true;
-            }
-            
-            // Handle dev console commands
-            if (e.key === '/') {
-                const command = prompt('Enter command (/wave, /speed, /kill, /health, /points):');
-                if (command) {
-                    handleDevCommand(command);
+            // Handle menu navigation
+            if (gameState === 'menu') {
+                if (key === 'w' || key === 'arrowup') {
+                    menuSelection = (menuSelection - 1 + 2) % 2;
+                } else if (key === 's' || key === 'arrowdown') {
+                    menuSelection = (menuSelection + 1) % 2;
+                } else if (key === 'enter') {
+                    if (menuSelection === 0) {
+                        startGame();
+                    } else if (menuSelection === 1) {
+                        startEndlessMode();
+                    }
                 }
-                e.preventDefault();
+                return;
             }
             
-            // Pause with ESC
-            if (e.key === 'Escape' && gameRunning && !gamePaused) {
-                pauseGame();
-            } else if (e.key === 'Escape' && gamePaused) {
-                resumeGame();
+            // Handle pause menu navigation
+            if (gameState === 'paused') {
+                if (key === 'w' || key === 'arrowup') {
+                    pauseSelection = (pauseSelection - 1 + 3) % 3;
+                } else if (key === 's' || key === 'arrowdown') {
+                    pauseSelection = (pauseSelection + 1) % 3;
+                } else if (key === 'enter') {
+                    if (pauseSelection === 0) {
+                        gameState = 'playing';
+                    } else if (pauseSelection === 1) {
+                        gameState = 'shop';
+                        shopSelection = 0;
+                    } else if (pauseSelection === 2) {
+                        gameState = 'menu';
+                        menuSelection = 0;
+                    }
+                }
+                return;
+            }
+            
+            // Handle shop navigation
+            if (gameState === 'shop') {
+                if (key === 'w' || key === 'arrowup') {
+                    shopSelection = (shopSelection - 1 + 4) % 4;
+                } else if (key === 's' || key === 'arrowdown') {
+                    shopSelection = (shopSelection + 1) % 4;
+                } else if (key === 'enter') {
+                    if (shopSelection === 0) {
+                        upgradeRangeFromShop();
+                    } else if (shopSelection === 1) {
+                        upgradeSpeedFromShop();
+                    } else if (shopSelection === 2) {
+                        restoreHealthFromShop();
+                    } else if (shopSelection === 3) {
+                        gameState = 'paused';
+                        pauseSelection = 0;
+                    }
+                }
+                return;
+            }
+            
+            // Handle game over screen
+            if (gameState === 'gameOver') {
+                if (key === 'enter') {
+                    startGame();
+                } else if (key === 'escape') {
+                    gameState = 'menu';
+                    menuSelection = 0;
+                }
+                return;
+            }
+            
+            // Only track game keys when playing
+            if (gameState === 'playing') {
+                if (['w', 'a', 's', 'd', 'shift', ' '].includes(key)) {
+                    keys[key] = true;
+                }
+                
+                // Track shift key state
+                if (e.key === 'Shift') {
+                    shiftPressed = true;
+                }
+                
+                // Handle dev console commands
+                if (e.key === '/') {
+                    const command = prompt('Enter command (/wave, /speed, /kill, /health, /points):');
+                    if (command) {
+                        handleDevCommand(command);
+                    }
+                    e.preventDefault();
+                }
+                
+                // Pause with ESC
+                if (e.key === 'Escape') {
+                    gameState = 'paused';
+                    pauseSelection = 0;
+                }
             }
         });
         
@@ -1691,7 +1882,6 @@
                 default:
                     console.log('Unknown command. Available: /wave, /speed, /kill, /health, /points');
             }
-            updateUI();
         }
         
         document.addEventListener('keyup', (e) => {
@@ -1715,10 +1905,162 @@
             
             mouseX = (e.clientX - rect.left) * scaleX;
             mouseY = (e.clientY - rect.top) * scaleY;
+            
+            // Update menu selection based on mouse hover
+            if (gameState === 'menu') {
+                const clickX = mouseX;
+                const clickY = mouseY;
+                
+                // Check START GAME button
+                if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                    clickY >= 275 && clickY <= 325) {
+                    menuSelection = 0;
+                }
+                // Check ENDLESS MODE button
+                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                         clickY >= 335 && clickY <= 385) {
+                    menuSelection = 1;
+                }
+            }
+            
+            // Update pause menu selection based on mouse hover
+            if (gameState === 'paused') {
+                const clickX = mouseX;
+                const clickY = mouseY;
+                
+                // Check RESUME button
+                if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                    clickY >= 275 && clickY <= 325) {
+                    pauseSelection = 0;
+                }
+                // Check SHOP button
+                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                         clickY >= 335 && clickY <= 385) {
+                    pauseSelection = 1;
+                }
+                // Check MAIN MENU button
+                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                         clickY >= 395 && clickY <= 445) {
+                    pauseSelection = 2;
+                }
+            }
+            
+            // Update shop selection based on mouse hover
+            if (gameState === 'shop') {
+                const clickX = mouseX;
+                const clickY = mouseY;
+                
+                if (clickX >= 100 && clickX <= canvas.width - 100) {
+                    if (clickY >= 150 && clickY <= 210) {
+                        shopSelection = 0;
+                    } else if (clickY >= 230 && clickY <= 290) {
+                        shopSelection = 1;
+                    } else if (clickY >= 310 && clickY <= 370) {
+                        shopSelection = 2;
+                    }
+                }
+                
+                // Check back button at bottom
+                const backY = canvas.height - 100;
+                if (clickX >= canvas.width / 2 - 100 && clickX <= canvas.width / 2 + 100 &&
+                    clickY >= backY - 25 && clickY <= backY + 25) {
+                    shopSelection = 3;
+                }
+            }
         });
         
         canvas.addEventListener('mousedown', (e) => {
             mouseDown = true;
+            
+            // Handle menu mouse clicks
+            if (gameState === 'menu') {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const clickX = (e.clientX - rect.left) * scaleX;
+                const clickY = (e.clientY - rect.top) * scaleY;
+                
+                // Check START GAME button (y: 300, width: 300, height: 50)
+                if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                    clickY >= 275 && clickY <= 325) {
+                    startGame();
+                }
+                // Check ENDLESS MODE button (y: 360, width: 300, height: 50)
+                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                         clickY >= 335 && clickY <= 385) {
+                    startEndlessMode();
+                }
+            }
+            
+            // Handle pause menu mouse clicks
+            if (gameState === 'paused') {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const clickX = (e.clientX - rect.left) * scaleX;
+                const clickY = (e.clientY - rect.top) * scaleY;
+                
+                // Check RESUME button (y: 300, width: 300, height: 50)
+                if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                    clickY >= 275 && clickY <= 325) {
+                    gameState = 'playing';
+                }
+                // Check SHOP button (y: 360, width: 300, height: 50)
+                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                         clickY >= 335 && clickY <= 385) {
+                    gameState = 'shop';
+                    shopSelection = 0;
+                }
+                // Check MAIN MENU button (y: 420, width: 300, height: 50)
+                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                         clickY >= 395 && clickY <= 445) {
+                    gameState = 'menu';
+                    menuSelection = 0;
+                }
+            }
+            
+            // Handle shop mouse clicks
+            if (gameState === 'shop') {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const clickX = (e.clientX - rect.left) * scaleX;
+                const clickY = (e.clientY - rect.top) * scaleY;
+                
+                // Check shop items (x: 100-700, y: 180-420)
+                if (clickX >= 100 && clickX <= canvas.width - 100) {
+                    if (clickY >= 150 && clickY <= 210) {
+                        upgradeRangeFromShop();
+                    } else if (clickY >= 230 && clickY <= 290) {
+                        upgradeSpeedFromShop();
+                    } else if (clickY >= 310 && clickY <= 370) {
+                        restoreHealthFromShop();
+                    }
+                }
+                
+                // Check back button at bottom
+                const backY = canvas.height - 100;
+                if (clickX >= canvas.width / 2 - 100 && clickX <= canvas.width / 2 + 100 &&
+                    clickY >= backY - 25 && clickY <= backY + 25) {
+                    gameState = 'paused';
+                    pauseSelection = 0;
+                }
+            }
+            
+            // Handle game over mouse click
+            if (gameState === 'gameOver') {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const clickX = (e.clientX - rect.left) * scaleX;
+                const clickY = (e.clientY - rect.top) * scaleY;
+                
+                // Check PLAY AGAIN button (y: 320, width: 300, height: 60)
+                if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
+                    clickY >= 320 && clickY <= 380) {
+                    startGame();
+                }
+            }
         });
         
         canvas.addEventListener('mouseup', (e) => {
@@ -1729,24 +2071,10 @@
             mouseDown = false;
         });
         
-        document.getElementById('startBtn').addEventListener('click', startGame);
-        document.getElementById('endlessBtn').addEventListener('click', startEndlessMode);
-        document.getElementById('restartBtn').addEventListener('click', startGame);
-        
-        // Pause menu buttons
-        document.getElementById('resumeBtn').addEventListener('click', resumeGame);
-        document.getElementById('shopBtn').addEventListener('click', openShop);
-        document.getElementById('mainMenuBtn').addEventListener('click', returnToMainMenu);
-        
-        // Shop buttons
-        document.getElementById('shopUpgradeRangeBtn').addEventListener('click', upgradeRangeFromShop);
-        document.getElementById('shopUpgradeSpeedBtn').addEventListener('click', upgradeSpeedFromShop);
-        document.getElementById('shopRestoreHealthBtn').addEventListener('click', restoreHealthFromShop);
-        document.getElementById('backToPauseBtn').addEventListener('click', backToPause);
-        
         // Initialize
         initStars();
-        updateUI();
+        gameState = 'menu';
+        gameLoop();
     </script>
 </body>
 </html>
