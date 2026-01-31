@@ -1374,6 +1374,7 @@
         let isSprinting = false;
         let sprintCooldown = 0;
         let sprintDuration = 0;
+        let shiftPressed = false;
         const SPRINT_MAX_DURATION = 300; // 5 seconds at 60fps
         const SPRINT_MAX_COOLDOWN = 300; // 5 seconds at 60fps
         
@@ -1406,8 +1407,8 @@
                 player.x = Math.min(canvas.width - player.width, player.x + currentSpeed);
             }
             
-            // Sprint with shift
-            if ((keys['Shift'] || keys['shift']) && !isSprinting && sprintCooldown <= 0) {
+            // Sprint with shift - use shiftPressed state
+            if (shiftPressed && !isSprinting && sprintCooldown <= 0) {
                 isSprinting = true;
                 sprintDuration = SPRINT_MAX_DURATION;
             }
@@ -1559,6 +1560,7 @@
             isSprinting = false;
             sprintCooldown = 0;
             sprintDuration = 0;
+            shiftPressed = false;
             bullets = [];
             bossBullets = [];
             enemies = [];
@@ -1594,6 +1596,7 @@
             isSprinting = false;
             sprintCooldown = 0;
             sprintDuration = 0;
+            shiftPressed = false;
             bullets = [];
             bossBullets = [];
             enemies = [];
@@ -1627,6 +1630,20 @@
                 keys[key] = true;
             }
             
+            // Track shift key state
+            if (e.key === 'Shift') {
+                shiftPressed = true;
+            }
+            
+            // Handle dev console commands
+            if (e.key === '/') {
+                const command = prompt('Enter command (/wave, /speed, /kill, /health, /points):');
+                if (command) {
+                    handleDevCommand(command);
+                }
+                e.preventDefault();
+            }
+            
             // Pause with ESC
             if (e.key === 'Escape' && gameRunning && !gamePaused) {
                 pauseGame();
@@ -1635,11 +1652,58 @@
             }
         });
         
+        // Dev console command handler
+        function handleDevCommand(command) {
+            const parts = command.trim().split(' ');
+            const cmd = parts[0].toLowerCase();
+            const value = parseInt(parts[1]);
+            
+            switch(cmd) {
+                case '/wave':
+                    if (!isNaN(value)) {
+                        wave = Math.max(1, value);
+                        console.log(`Wave set to ${wave}`);
+                    }
+                    break;
+                case '/speed':
+                    if (!isNaN(value)) {
+                        player.baseSpeed = Math.max(1, value);
+                        console.log(`Player speed set to ${player.baseSpeed}`);
+                    }
+                    break;
+                case '/kill':
+                    enemies = [];
+                    bossBullets = [];
+                    console.log('All enemies killed');
+                    break;
+                case '/health':
+                    if (!isNaN(value)) {
+                        health = Math.max(0, Math.min(maxHealth, value));
+                        console.log(`Health set to ${health}`);
+                    }
+                    break;
+                case '/points':
+                    if (!isNaN(value)) {
+                        score = Math.max(0, value);
+                        console.log(`Points set to ${score}`);
+                    }
+                    break;
+                default:
+                    console.log('Unknown command. Available: /wave, /speed, /kill, /health, /points');
+            }
+            updateUI();
+        }
+        
         document.addEventListener('keyup', (e) => {
             // Only untrack keys we actually use
             const key = e.key.toLowerCase();
             if (['w', 'a', 's', 'd', 'shift', ' '].includes(key)) {
                 keys[key] = false;
+            }
+            
+            // Track shift key state
+            if (e.key === 'Shift') {
+                shiftPressed = false;
             }
         });
         
