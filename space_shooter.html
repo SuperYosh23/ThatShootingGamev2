@@ -2491,6 +2491,45 @@
                 }
             }
             
+            // Handle pause menu mouse clicks
+            if (gameState === 'paused') {
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                const clickX = (e.clientX - rect.left) * scaleX;
+                const clickY = (e.clientY - rect.top) * scaleY;
+                
+                // Calculate panel positions
+                const panelWidth = 500;
+                const panelHeight = 400;
+                const panelX = (canvas.width - panelWidth) / 2;
+                const panelY = (canvas.height - panelHeight) / 2;
+                
+                // Check RESUME button
+                if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                    clickY >= panelY + 115 && clickY <= panelY + 165) {
+                    playSound('uiTap');
+                    gameState = 'playing';
+                    updateBGM();
+                }
+                // Check SHOP button
+                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                         clickY >= panelY + 185 && clickY <= panelY + 235) {
+                    playSound('uiTap');
+                    gameState = 'shop';
+                    updateBGM();
+                    shopSelection = 0;
+                }
+                // Check MAIN MENU button
+                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
+                         clickY >= panelY + 255 && clickY <= panelY + 305) {
+                    playSound('uiTap');
+                    gameState = 'menu';
+                    updateBGM();
+                    menuSelection = 0;
+                }
+            }
+            
             // Handle shop mouse clicks
             if (gameState === 'shop') {
                 const rect = canvas.getBoundingClientRect();
