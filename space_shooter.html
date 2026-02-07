@@ -362,7 +362,7 @@
             margin-top: 30px;
         }
         
-        #startBtn, #endlessBtn {
+        #startBtn {
             background: #000;
             border: 2px solid #0ff;
             padding: 12px 30px;
@@ -372,18 +372,8 @@
             color: #0ff;
         }
         
-        #endlessBtn {
-            border-color: #ff3333;
-            color: #ff3333;
-        }
-        
         #startBtn:hover {
             background: #0ff;
-            color: #000;
-        }
-        
-        #endlessBtn:hover {
-            background: #ff3333;
             color: #000;
         }
         
@@ -614,7 +604,7 @@
         
         // Game state
         let gameState = 'menu'; // 'menu', 'playing', 'paused', 'shop', 'gameOver'
-        let menuSelection = 0; // 0 = Start Game, 1 = Endless Mode
+        let menuSelection = 0; // 0 = Start Game
         let pauseSelection = 0; // 0 = Resume, 1 = Shop, 2 = Main Menu
         let shopSelection = 0; // 0 = Range, 1 = Speed, 2 = Health, 3 = Back
         let gameOverSelection = 0; // 0 = Play Again, 1 = Main Menu
@@ -918,7 +908,7 @@
             }
         }
         
-        // Create enemy with cumulative wave-based progression and endless mode
+        // Create enemy with cumulative wave-based progression
         function createEnemy() {
             let type;
             let baseSpeed;
@@ -929,57 +919,7 @@
                 return;
             }
             
-            // Endless mode after wave 3
-            if (wave > 4) {
-                // In endless mode, keep wave 3 enemies but increase difficulty
-                const endlessWave = wave - 4; // How many waves into endless mode
-                const speedMultiplier = 1 + (endlessWave * 0.2); // 20% faster per endless wave
-                
-                const availableTypes = ['basic', 'fast', 'heavy'];
-                type = availableTypes[Math.floor(Math.random() * availableTypes.length)];
-                
-                let enemy = {
-                    x: Math.random() * (canvas.width - 40),
-                    y: -40,
-                    width: 40,
-                    height: 40,
-                    type: type
-                };
-                
-                // Base speeds with endless progression
-                switch(type) {
-                    case 'basic':
-                        baseSpeed = 2.5;
-                        enemy.speed = baseSpeed * speedMultiplier;
-                        enemy.health = 1;
-                        enemy.color = '#ff3333';
-                        enemy.points = 10;
-                        break;
-                    case 'fast':
-                        baseSpeed = 5;
-                        enemy.speed = baseSpeed * speedMultiplier;
-                        enemy.health = 1;
-                        enemy.color = '#ff9933';
-                        enemy.points = 20;
-                        enemy.width = 30;
-                        enemy.height = 30;
-                        break;
-                    case 'heavy':
-                        baseSpeed = 1.2;
-                        enemy.speed = baseSpeed * speedMultiplier;
-                        enemy.health = 3;
-                        enemy.color = '#9933ff';
-                        enemy.points = 50;
-                        enemy.width = 50;
-                        enemy.height = 50;
-                        break;
-                }
-                
-                enemies.push(enemy);
-                return;
-            }
-            
-            // Regular mode (waves 1-3)
+            // Regular mode only (waves 1-3 + boss)
             // Cumulative enemy types based on wave
             const availableTypes = [];
             if (wave >= 1) availableTypes.push('basic');
@@ -1422,7 +1362,7 @@
             }
         }
         
-        // Spawn enemies with endless mode support
+        // Spawn enemies
         let spawnTimer = 0;
         let bossSpawned = false;
         function spawnEnemies() {
@@ -1443,13 +1383,9 @@
                 bossSpawned = false;
             }
             
-            // Adjust spawn rate for endless mode
+            // Adjust spawn rate
             let spawnRate = 60 - wave * 5;
-            if (wave > 4) {
-                // In endless mode, increase spawn rate progressively
-                const endlessWave = wave - 4;
-                spawnRate = Math.max(20, 60 - (3 * 5) - (endlessWave * 5)); // Minimum 20 frames between spawns
-            }
+            spawnRate = Math.max(20, spawnRate); // Minimum 20 frames between spawns
             
             if (spawnTimer > spawnRate) {
                 createEnemy();
@@ -1713,7 +1649,7 @@
             // Wave indicator
             ctx.fillStyle = '#0ff';
             ctx.font = '12px Courier New';
-            ctx.fillText('WAVES 1-3 + BOSS + ENDLESS MODE', canvas.width / 2, 310);
+            ctx.fillText('WAVES 1-3 + BOSS', canvas.width / 2, 310);
             
             // Stats panel
             ctx.fillStyle = 'rgba(0, 255, 255, 0.05)';
@@ -1730,8 +1666,8 @@
             ctx.fillText('0', canvas.width / 2, 385);
             
             // Menu options
-            const options = ['START GAME', 'ENDLESS MODE'];
-            const colors = ['#0ff', '#ff3333'];
+            const options = ['START GAME'];
+            const colors = ['#0ff'];
             
             options.forEach((option, index) => {
                 const y = 430 + index * 60; // Moved down to accommodate new content
@@ -2173,38 +2109,6 @@
             requestAnimationFrame(gameLoop);
         }
         
-        // Start endless mode
-        function startEndlessMode() {
-            gameState = 'playing';
-            score = 0;
-            health = maxHealth;
-            wave = 5; // Start in endless mode
-            enemiesDestroyed = 0;
-            enemiesPerWave = 5;
-            rangeLevel = 1;
-            shootingRange = 100;
-            rangeUpgradeCost = 50;
-            speedLevel = 1;
-            speedUpgradeCost = 30;
-            healthRestoreCost = 20;
-            bossSpawned = false;
-            isSprinting = false;
-            sprintCooldown = 0;
-            sprintDuration = 0;
-            shiftPressed = false;
-            bullets = [];
-            bossBullets = [];
-            enemies = [];
-            particles = [];
-            
-            // Reset player position based on canvas size
-            player.x = canvas.width / 2 - 20;
-            player.y = canvas.height - 80;
-            
-            updateBGM();
-            gameLoop();
-        }
-        
         // Start game
         function startGame() {
             gameState = 'playing';
@@ -2250,18 +2154,14 @@
             // Handle menu navigation
             if (gameState === 'menu') {
                 if (key === 'w' || key === 'arrowup') {
-                    menuSelection = (menuSelection - 1 + 2) % 2;
+                    menuSelection = (menuSelection - 1 + 1) % 1;
                     playSound('menuSelect');
                 } else if (key === 's' || key === 'arrowdown') {
-                    menuSelection = (menuSelection + 1) % 2;
+                    menuSelection = (menuSelection + 1) % 1;
                     playSound('menuSelect');
                 } else if (key === 'enter') {
                     playSound('uiTap');
-                    if (menuSelection === 0) {
-                        startGame();
-                    } else if (menuSelection === 1) {
-                        startEndlessMode();
-                    }
+                    startGame();
                 }
                 return;
             }
@@ -2487,11 +2387,6 @@
                     clickY >= 405 && clickY <= 455) {
                     menuSelection = 0;
                 }
-                // Check ENDLESS MODE button (moved to y: 490)
-                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                         clickY >= 465 && clickY <= 515) {
-                    menuSelection = 1;
-                }
             }
             
             // Update pause menu selection based on mouse hover
@@ -2588,56 +2483,11 @@
                 const clickX = (e.clientX - rect.left) * scaleX;
                 const clickY = (e.clientY - rect.top) * scaleY;
                 
-                // Check START GAME button (moved to y: 430)
+                // Check START GAME button
                 if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
                     clickY >= 405 && clickY <= 455) {
                     playSound('uiTap');
                     startGame();
-                }
-                // Check ENDLESS MODE button (moved to y: 490)
-                else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
-                         clickY >= 465 && clickY <= 515) {
-                    playSound('uiTap');
-                    startEndlessMode();
-                }
-            }
-            
-            // Handle pause menu mouse clicks
-            if (gameState === 'paused') {
-                const rect = canvas.getBoundingClientRect();
-                const scaleX = canvas.width / rect.width;
-                const scaleY = canvas.height / rect.height;
-                const clickX = (e.clientX - rect.left) * scaleX;
-                const clickY = (e.clientY - rect.top) * scaleY;
-                
-                // Calculate panel positions
-                const panelWidth = 500;
-                const panelHeight = 400;
-                const panelX = (canvas.width - panelWidth) / 2;
-                const panelY = (canvas.height - panelHeight) / 2;
-                
-                // Check RESUME button
-                if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
-                    clickY >= panelY + 115 && clickY <= panelY + 165) {
-                    playSound('uiTap');
-                    gameState = 'playing';
-                    updateBGM();
-                }
-                // Check SHOP button
-                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
-                         clickY >= panelY + 185 && clickY <= panelY + 235) {
-                    playSound('uiTap');
-                    gameState = 'shop';
-                    updateBGM();
-                    shopSelection = 0;
-                }
-                // Check MAIN MENU button
-                else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
-                         clickY >= panelY + 255 && clickY <= panelY + 305) {
-                    playSound('uiTap');
-                    gameState = 'menu';
-                    updateBGM();
-                    menuSelection = 0;
                 }
             }
             
@@ -2738,20 +2588,6 @@
                     touchY >= 405 && touchY <= 455) {
                     playSound('uiTap');
                     startGame();
-                }
-                // Check ENDLESS MODE button
-                else if (touchX >= canvas.width / 2 - 150 && touchX <= canvas.width / 2 + 150 &&
-                         touchY >= 465 && touchY <= 515) {
-                    playSound('uiTap');
-                    startEndlessMode();
-                }
-                // Check MOBILE CONTROLS button
-                else if (touchX >= canvas.width / 2 - 150 && touchX <= canvas.width / 2 + 150 &&
-                         touchY >= 525 && touchY <= 575) {
-                    playSound('uiTap');
-                    mobileControlsEnabled = !mobileControlsEnabled;
-                    updateMobileControlsVisibility();
-                    playSound('powerup');
                 }
             }
             
@@ -3148,12 +2984,6 @@
                     touchY >= 405 && touchY <= 455) {
                     playSound('uiTap');
                     startGame();
-                }
-                // Check ENDLESS MODE button
-                else if (touchX >= canvas.width / 2 - 150 && touchX <= canvas.width / 2 + 150 &&
-                         touchY >= 465 && touchY <= 515) {
-                    playSound('uiTap');
-                    startEndlessMode();
                 }
             }
             
