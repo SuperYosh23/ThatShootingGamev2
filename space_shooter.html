@@ -36,6 +36,7 @@
             box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
             max-width: 100%;
             max-height: 100%;
+            border-radius: 15px;
         }
         
         .hud-panel {
@@ -534,6 +535,18 @@
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <video id="introVideo" autoplay playsinline style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 600px; object-fit: cover; z-index: 5; pointer-events: auto; border-radius: 15px; cursor: pointer;">
+            <source src="intro.mp4" type="video/mp4">
+        </video>
+        <div id="startOverlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 600px; z-index: 6; display: flex; justify-content: center; align-items: center; pointer-events: auto; border-radius: 15px;">
+            <div style="background: rgba(0, 0, 0, 0.7); color: #0ff; padding: 20px 40px; border-radius: 10px; font-size: 24px; font-weight: bold; text-align: center; border: 2px solid #0ff; cursor: pointer; user-select: none; transition: all 0.3s ease;">
+                Click to start game
+            </div>
+        </div>
+        <div id="gameBlocker" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 4; display: none; pointer-events: auto; background: transparent;"></div>
+        <audio id="loopAudio" loop preload="auto" style="display: none;">
+            <source src="loop.wav" type="audio/wav">
+        </audio>
     </div>
     
     <!-- Mobile Controls -->
@@ -581,6 +594,18 @@
             canvas.height = height;
             canvas.style.width = width + 'px';
             canvas.style.height = height + 'px';
+            
+            // Resize intro video and overlay to match canvas and keep them centered
+            const introVideo = document.getElementById('introVideo');
+            const startOverlay = document.getElementById('startOverlay');
+            if (introVideo) {
+                introVideo.style.width = width + 'px';
+                introVideo.style.height = height + 'px';
+            }
+            if (startOverlay) {
+                startOverlay.style.width = width + 'px';
+                startOverlay.style.height = height + 'px';
+            }
         }
         
         // Handle window resize
@@ -3226,6 +3251,69 @@
         initStars();
         initMobileControls();
         gameState = 'menu';
+        
+        // Handle intro video
+        const introVideo = document.getElementById('introVideo');
+        const loopAudio = document.getElementById('loopAudio');
+        const startOverlay = document.getElementById('startOverlay');
+        const gameBlocker = document.getElementById('gameBlocker');
+        if (introVideo && loopAudio && startOverlay && gameBlocker) {
+            // Preload the loop audio to eliminate delay
+            loopAudio.load();
+            
+            // Function to start media and hide overlay
+            const startMedia = () => {
+                introVideo.play().catch(err => console.log('Video play failed:', err));
+                loopAudio.load(); // Ensure loop audio is loaded
+                startOverlay.style.display = 'none';
+                gameBlocker.style.display = 'block'; // Block game interaction during video
+                document.removeEventListener('click', startMedia);
+                document.removeEventListener('keydown', startMedia);
+                document.removeEventListener('touchstart', startMedia);
+            };
+            
+            // Function to skip video and start game
+            const skipVideo = () => {
+                introVideo.style.display = 'none';
+                startOverlay.style.display = 'none';
+                gameBlocker.style.display = 'none'; // Allow game interaction
+                loopAudio.currentTime = 0; // Reset to start
+                loopAudio.play().catch(err => console.log('Loop audio play failed:', err));
+            };
+            
+            // Try to autoplay immediately
+            introVideo.play().then(() => {
+                console.log('Video autoplay started');
+                gameBlocker.style.display = 'block'; // Block game interaction during video
+            }).catch(e => {
+                console.log('Auto-play prevented, waiting for user interaction:', e);
+                // Add click listener to start video with audio on first user interaction
+                document.addEventListener('click', startMedia);
+                document.addEventListener('keydown', startMedia);
+                document.addEventListener('touchstart', startMedia);
+            });
+            
+            // Handle overlay click
+            startOverlay.addEventListener('click', (e) => {
+                e.stopPropagation();
+                startMedia();
+            });
+            
+            // Handle video click to skip
+            introVideo.addEventListener('click', (e) => {
+                e.stopPropagation();
+                skipVideo();
+            });
+            
+            introVideo.addEventListener('ended', () => {
+                introVideo.style.display = 'none';
+                gameBlocker.style.display = 'none'; // Allow game interaction
+                // Start looping loop.wav immediately when video ends
+                loopAudio.currentTime = 0; // Reset to start
+                loopAudio.play().catch(err => console.log('Loop audio play failed:', err));
+            });
+        }
+        
         gameLoop();
         
         // Sound System - Retro 8-bit sounds
