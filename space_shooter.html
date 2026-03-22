@@ -525,7 +525,7 @@
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
-        <video id="introVideo" autoplay playsinline style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 600px; object-fit: cover; z-index: 5; pointer-events: auto; border-radius: 15px; cursor: pointer;">
+        <video id="introVideo" playsinline style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 600px; object-fit: cover; z-index: 5; pointer-events: auto; border-radius: 15px; cursor: pointer;">
             <source src="intro.mp4" type="video/mp4">
         </video>
         <div id="startOverlay" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 800px; height: 600px; z-index: 6; display: flex; justify-content: center; align-items: center; pointer-events: auto; border-radius: 15px;">
@@ -624,6 +624,28 @@
         let isDraggingSlider = false;
         let draggedSliderType = null; // 'sfx' or 'music'
         
+        // Track previous state for options menu navigation
+        let previousGameState = 'menu';
+        
+        // Settings persistence
+        function saveSettings() {
+            const settings = {
+                sfxVolume: sfxVolume,
+                musicVolume: musicVolume
+            };
+            localStorage.setItem('shootingGameSettings', JSON.stringify(settings));
+        }
+        
+        function loadSettings() {
+            const saved = localStorage.getItem('shootingGameSettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                sfxVolume = settings.sfxVolume !== undefined ? settings.sfxVolume : 1.0;
+                musicVolume = settings.musicVolume !== undefined ? settings.musicVolume : 1.0;
+                updateLoopAudioVolume();
+            }
+        }
+        
         // Update slider value based on mouse position
         function updateSliderFromMouse(mouseX, sliderStartX, sliderEndX, sliderType) {
             const sliderWidth = sliderEndX - sliderStartX;
@@ -636,6 +658,9 @@
                 musicVolume = newVolume;
                 updateLoopAudioVolume();
             }
+            
+            // Save settings when volume changes
+            saveSettings();
         }
         
         // Update loop audio volume
@@ -643,6 +668,12 @@
             const loopAudio = document.getElementById('loopAudio');
             if (loopAudio) {
                 loopAudio.volume = musicVolume;
+            }
+            
+            // Also update intro video volume
+            const introVideo = document.getElementById('introVideo');
+            if (introVideo) {
+                introVideo.volume = musicVolume;
             }
         }
         
@@ -851,6 +882,57 @@
             ctx.fillRect(barX, barY, barWidth * healthPercent, barHeight);
             
             // Health bar border
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(barX, barY, barWidth, barHeight);
+            
+            ctx.restore();
+        }
+        
+        // Draw stamina bar above player
+        function drawStaminaBar() {
+            // Show bar when sprinting, on cooldown, or refilling
+            if (sprintDuration === SPRINT_MAX_DURATION && sprintCooldown <= 0) return;
+            
+            ctx.save();
+            
+            // Calculate stamina percentage
+            let staminaPercent = sprintDuration / SPRINT_MAX_DURATION;
+            let barColor;
+            let showBar = true;
+            
+            // Determine bar color and state
+            if (isSprinting) {
+                // Sprinting - green to yellow to red based on remaining stamina
+                if (staminaPercent > 0.5) {
+                    barColor = `rgb(${Math.floor(255 * (1 - staminaPercent) * 2)}, 255, 0)`;
+                } else {
+                    barColor = `rgb(255, ${Math.floor(255 * staminaPercent * 2)}, 0)`;
+                }
+            } else if (sprintCooldown > 0) {
+                // Cooldown - red bar showing cooldown progress
+                staminaPercent = 1 - (sprintCooldown / SPRINT_MAX_COOLDOWN);
+                barColor = `rgb(255, 100, 100)`;
+            } else {
+                // Refilling - blue bar
+                barColor = `rgb(100, 200, 255)`;
+            }
+            
+            // Bar dimensions
+            const barWidth = 40;
+            const barHeight = 4;
+            const barX = player.x + player.width / 2 - barWidth / 2;
+            const barY = player.y - 15;
+            
+            // Background
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillRect(barX, barY, barWidth, barHeight);
+            
+            // Stamina fill
+            ctx.fillStyle = barColor;
+            ctx.fillRect(barX, barY, barWidth * staminaPercent, barHeight);
+            
+            // Border
             ctx.strokeStyle = '#ffffff';
             ctx.lineWidth = 1;
             ctx.strokeRect(barX, barY, barWidth, barHeight);
@@ -1437,22 +1519,32 @@
         let sprintCooldown = 0;
         let sprintDuration = 0;
         let shiftPressed = false;
-        const SPRINT_MAX_DURATION = 300; // 5 seconds at 60fps
-        const SPRINT_MAX_COOLDOWN = 300; // 5 seconds at 60fps
+        const SPRINT_MAX_DURATION = 60; // 1 second at 60fps
+        const SPRINT_MAX_COOLDOWN = 120; // 2 seconds at 60fps
         
         // Handle player input
         function handleInput() {
             // Calculate current speed (with sprint bonus)
             let currentSpeed = player.speed;
-            if (isSprinting && sprintDuration > 0) {
+            
+            // Handle sprint logic
+            if (shiftPressed && sprintCooldown <= 0 && sprintDuration > 0) {
+                // Sprinting while holding shift
+                isSprinting = true;
                 currentSpeed *= 1.5; // 50% speed boost when sprinting
                 sprintDuration--;
                 if (sprintDuration <= 0) {
                     isSprinting = false;
                     sprintCooldown = SPRINT_MAX_COOLDOWN;
                 }
-            } else if (sprintCooldown > 0) {
-                sprintCooldown--;
+            } else {
+                // Not sprinting - refill stamina
+                isSprinting = false;
+                if (sprintCooldown > 0) {
+                    sprintCooldown--;
+                } else if (sprintDuration < SPRINT_MAX_DURATION) {
+                    sprintDuration++; // Refill stamina
+                }
             }
             
             // Movement input (keyboard or left joystick)
@@ -1488,32 +1580,24 @@
                     moveY /= magnitude;
                 }
                 
-                player.x = Math.max(0, Math.min(canvas.width - player.width, player.x + moveX * currentSpeed));
-                player.y = Math.max(0, Math.min(canvas.height - player.height, player.y + moveY * currentSpeed));
-            }
-            
-            // Sprint with shift - use shiftPressed state
-            if (shiftPressed && !isSprinting && sprintCooldown <= 0) {
-                isSprinting = true;
-                sprintDuration = SPRINT_MAX_DURATION;
-            }
-            
-            // Shooting with right joystick (mobile) or mouse/keyboard
-            if (isMobile && aimJoystickActive) {
-                // Calculate aim position based on right joystick
-                const aimX = (player.x + player.width / 2) + (aimJoystickX * shootingRange);
-                const aimY = (player.y + player.height / 2) + (aimJoystickY * shootingRange);
-                createBullet(aimX, aimY);
-            } else {
-                // Auto-shoot when mouse is held down
-                if (mouseDown) {
-                    createBullet(mouseX, mouseY);
-                }
+                // Apply movement to player position
+                player.x += moveX * currentSpeed;
+                player.y += moveY * currentSpeed;
                 
-                // Spacebar shooting
-                if (keys[' '] || keys['Space']) {
-                    createBullet(mouseX, mouseY);
-                }
+                // Keep player within canvas bounds
+                player.x = Math.max(0, Math.min(canvas.width - player.width, player.x));
+                player.y = Math.max(0, Math.min(canvas.height - player.height, player.y));
+            }
+            
+            // Handle shooting (independent of movement)
+            // Auto-shoot when mouse is held down
+            if (mouseDown) {
+                createBullet(mouseX, mouseY);
+            }
+            
+            // Spacebar shooting
+            if (keys[' '] || keys['Space']) {
+                createBullet(mouseX, mouseY);
             }
         }
         
@@ -1584,6 +1668,58 @@
             ctx.textAlign = 'center';
             ctx.fillText(`${Math.max(0, health)}/${maxHealth}`, healthBarX + healthBarWidth / 2, centerY - 2);
             
+            // Draw STAMINA
+            ctx.fillStyle = '#0ff';
+            ctx.font = 'bold 12px Courier New';
+            ctx.textAlign = 'left';
+            ctx.fillText('STAMINA:', healthBarX + healthBarWidth + 20, centerY - 8);
+            
+            // Draw stamina bar
+            const staminaBarX = healthBarX + healthBarWidth + 80;
+            const staminaBarY = centerY - 12;
+            const staminaBarWidth = 80;
+            const staminaBarHeight = 16;
+            
+            // Calculate stamina percentage and color
+            let staminaPercent = sprintDuration / SPRINT_MAX_DURATION;
+            let staminaColor;
+            
+            if (isSprinting) {
+                // Sprinting - green to yellow to red
+                if (staminaPercent > 0.5) {
+                    staminaColor = `rgb(${Math.floor(255 * (1 - staminaPercent) * 2)}, 255, 0)`;
+                } else {
+                    staminaColor = `rgb(255, ${Math.floor(255 * staminaPercent * 2)}, 0)`;
+                }
+            } else if (sprintCooldown > 0) {
+                // Cooldown - red
+                staminaPercent = 1 - (sprintCooldown / SPRINT_MAX_COOLDOWN);
+                staminaColor = `rgb(255, 100, 100)`;
+            } else {
+                // Refilling or ready - blue
+                staminaColor = `rgb(100, 200, 255)`;
+            }
+            
+            // Stamina bar background
+            ctx.fillStyle = '#004040';
+            ctx.fillRect(staminaBarX, staminaBarY, staminaBarWidth, staminaBarHeight);
+            
+            // Stamina bar fill
+            ctx.fillStyle = staminaColor;
+            ctx.fillRect(staminaBarX, staminaBarY, staminaBarWidth * staminaPercent, staminaBarHeight);
+            
+            // Stamina bar border
+            ctx.strokeStyle = '#0ff';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(staminaBarX, staminaBarY, staminaBarWidth, staminaBarHeight);
+            
+            // Stamina text (small, no shadow)
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 8px Courier New';
+            ctx.textAlign = 'center';
+            const staminaText = isSprinting ? 'SPRINT' : (sprintCooldown > 0 ? 'COOLDOWN' : 'READY');
+            ctx.fillText(staminaText, staminaBarX + staminaBarWidth / 2, centerY - 2);
+            
             // Draw WAVE
             ctx.fillStyle = '#0ff';
             ctx.font = 'bold 12px Courier New';
@@ -1635,19 +1771,19 @@
             // Subtitle
             ctx.fillStyle = '#099';
             ctx.font = '14px Courier New';
-            ctx.fillText('RETRO ARCADE EXPERIENCE', canvas.width / 2, 105);
+            ctx.fillText('WORK IN PROGRESS', canvas.width / 2, 105);
             
             // Controls panel background
             ctx.fillStyle = 'rgba(0, 255, 255, 0.05)';
-            ctx.fillRect(canvas.width / 2 - 250, 130, 500, 80);
+            ctx.fillRect(canvas.width / 2 - 350, 130, 700, 60);
             ctx.strokeStyle = '#0ff';
             ctx.lineWidth = 1;
-            ctx.strokeRect(canvas.width / 2 - 250, 130, 500, 80);
+            ctx.strokeRect(canvas.width / 2 - 350, 130, 700, 60);
             
             // Controls info
             ctx.fillStyle = '#ccc';
             ctx.font = '16px Courier New';
-            ctx.fillText('WASD: Move | Mouse: Aim | Click: Shoot | ESC: Pause', canvas.width / 2, 155);
+            ctx.fillText('WASD: Move | Shift: Sprint | Mouse: Aim | Click: Shoot | ESC: Pause', canvas.width / 2, 155);
         
             
             
@@ -1661,21 +1797,25 @@
             // Enemy info with better layout
             ctx.fillStyle = '#ff3333';
             ctx.font = 'bold 14px Courier New';
-            ctx.fillText('▶ BASIC', canvas.width / 2 - 180, 255);
+            ctx.textAlign = 'center';
+            ctx.fillText('▶ BASIC', canvas.width / 2 - 120, 255);
             ctx.font = '12px Courier New';
-            ctx.fillText('10 pts', canvas.width / 2 - 180, 270);
+            ctx.fillText('10 pts', canvas.width / 2 - 120, 270);
             
             ctx.fillStyle = '#ff9933';
             ctx.font = 'bold 14px Courier New';
-            ctx.fillText('▶ FAST', canvas.width / 2 - 60, 255);
+            ctx.fillText('▶ FAST', canvas.width / 2, 255);
             ctx.font = '12px Courier New';
-            ctx.fillText('20 pts', canvas.width / 2 - 60, 270);
+            ctx.fillText('20 pts', canvas.width / 2, 270);
             
             ctx.fillStyle = '#9933ff';
             ctx.font = 'bold 14px Courier New';
-            ctx.fillText('▶ HEAVY', canvas.width / 2 + 60, 255);
+            ctx.fillText('▶ HEAVY', canvas.width / 2 + 120, 255);
             ctx.font = '12px Courier New';
-            ctx.fillText('50 pts', canvas.width / 2 + 60, 270);
+            ctx.fillText('50 pts', canvas.width / 2 + 120, 270);
+            
+            // Reset text alignment
+            ctx.textAlign = 'center';
             
             // Wave indicator
             ctx.fillStyle = '#0ff';
@@ -1722,7 +1862,7 @@
             // Footer info
             ctx.fillStyle = '#066';
             ctx.font = '10px Courier New';
-            ctx.fillText('v2.0 | Custom Cursor | Retro Sounds | Enhanced UI', canvas.width / 2, canvas.height - 30);
+            ctx.fillText('', canvas.width / 2, canvas.height - 30);
             
             // Instructions
             ctx.fillStyle = '#666';
@@ -1924,7 +2064,7 @@
             ctx.fillStyle = '#066';
             ctx.font = '12px Courier New';
             ctx.textAlign = 'center';
-            ctx.fillText('Press ESC to resume directly', canvas.width / 2, panelY + panelHeight - 20);
+            ctx.fillText('', canvas.width / 2, panelY + panelHeight - 20);
         }
         
         // Draw shop screen on canvas
@@ -2208,6 +2348,7 @@
                     
                     // Draw sharp elements on top
                     drawPlayer();
+                    drawStaminaBar();
                     drawBossBullets();
                     drawEnemies();
                     drawParticles();
@@ -2219,6 +2360,7 @@
                     updateStars();
                     drawStars();
                     drawPlayer();
+                    drawStaminaBar();
                     drawEnemies();
                     drawBullets();
                     drawBossBullets();
@@ -2232,6 +2374,7 @@
                     updateStars();
                     drawStars();
                     drawPlayer();
+                    drawStaminaBar();
                     drawEnemies();
                     drawBullets();
                     drawBossBullets();
@@ -2248,6 +2391,7 @@
                     updateStars();
                     drawStars();
                     drawPlayer();
+                    drawStaminaBar();
                     drawEnemies();
                     drawBullets();
                     drawBossBullets();
@@ -2316,6 +2460,7 @@
                     if (menuSelection === 0) {
                         startGame();
                     } else if (menuSelection === 1) {
+                        previousGameState = 'menu';
                         gameState = 'options';
                         optionsSelection = 0;
                     }
@@ -2341,6 +2486,7 @@
                         updateBGM();
                         shopSelection = 0;
                     } else if (pauseSelection === 2) {
+                        previousGameState = 'paused';
                         gameState = 'options';
                         optionsSelection = 0;
                     } else if (pauseSelection === 3) {
@@ -2388,30 +2534,34 @@
                 } else if (key === 'arrowleft') {
                     if (optionsSelection === 0) {
                         sfxVolume = Math.max(0, sfxVolume - 0.1);
+                        saveSettings();
                         playSound('menuSelect');
                     } else if (optionsSelection === 1) {
                         musicVolume = Math.max(0, musicVolume - 0.1);
                         updateLoopAudioVolume();
+                        saveSettings();
                         playSound('menuSelect');
                     }
                 } else if (key === 'arrowright') {
                     if (optionsSelection === 0) {
                         sfxVolume = Math.min(1, sfxVolume + 0.1);
+                        saveSettings();
                         playSound('menuSelect');
                     } else if (optionsSelection === 1) {
                         musicVolume = Math.min(1, musicVolume + 0.1);
                         updateLoopAudioVolume();
+                        saveSettings();
                         playSound('menuSelect');
                     }
                 } else if (key === 'enter') {
                     playSound('uiTap');
                     if (optionsSelection === 2) {
-                        gameState = 'menu';
+                        gameState = previousGameState;
                         optionsSelection = 0;
                     }
                 } else if (key === 'escape') {
                     playSound('uiTap');
-                    gameState = 'menu';
+                    gameState = previousGameState;
                     optionsSelection = 0;
                 }
                 return;
@@ -2722,7 +2872,20 @@
         });
         
         canvas.addEventListener('mousedown', (e) => {
-            mouseDown = true;
+            // Prevent right-click context menu
+            e.preventDefault();
+            
+            // Check if right-click (button 2)
+            if (e.button === 2) {
+                // Right-click for sprint
+                shiftPressed = true;
+                return;
+            }
+            
+            // Left-click for shooting
+            if (e.button === 0) {
+                mouseDown = true;
+            }
             
             // Handle menu mouse clicks
             if (gameState === 'menu') {
@@ -2742,6 +2905,7 @@
                 else if (clickX >= canvas.width / 2 - 150 && clickX <= canvas.width / 2 + 150 &&
                          clickY >= 465 && clickY <= 515) {
                     playSound('uiTap');
+                    previousGameState = 'menu';
                     gameState = 'options';
                     optionsSelection = 0;
                 }
@@ -2779,7 +2943,7 @@
                 else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
                          clickY >= panelY + 295 && clickY <= panelY + 345) {
                     playSound('uiTap');
-                    gameState = 'menu';
+                    gameState = previousGameState;
                     optionsSelection = 0;
                 }
             }
@@ -2817,6 +2981,7 @@
                 else if (clickX >= panelX + 50 && clickX <= panelX + panelWidth - 50 &&
                          clickY >= panelY + 255 && clickY <= panelY + 305) {
                     playSound('uiTap');
+                    previousGameState = 'paused';
                     gameState = 'options';
                     optionsSelection = 0;
                 }
@@ -2903,7 +3068,16 @@
         });
         
         canvas.addEventListener('mouseup', (e) => {
-            mouseDown = false;
+            // Check if right-click release
+            if (e.button === 2) {
+                shiftPressed = false;
+                return;
+            }
+            
+            // Left-click release
+            if (e.button === 0) {
+                mouseDown = false;
+            }
             
             // Stop dragging slider
             if (isDraggingSlider) {
@@ -2914,6 +3088,13 @@
         
         canvas.addEventListener('mouseleave', (e) => {
             mouseDown = false;
+            shiftPressed = false; // Release sprint when mouse leaves
+        });
+        
+        // Prevent context menu on right-click
+        canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
         });
         
         // Touch event handlers for menu navigation
@@ -3457,17 +3638,7 @@
                 loopAudio.play().catch(err => console.log('Loop audio play failed:', err));
             };
             
-            // Try to autoplay immediately
-            introVideo.play().then(() => {
-                console.log('Video autoplay started');
-                gameBlocker.style.display = 'block'; // Block game interaction during video
-            }).catch(e => {
-                console.log('Auto-play prevented, waiting for user interaction:', e);
-                // Add click listener to start video with audio on first user interaction
-                document.addEventListener('click', startMedia);
-                document.addEventListener('keydown', startMedia);
-                document.addEventListener('touchstart', startMedia);
-            });
+            // Don't autoplay - wait for user to click start button
             
             // Handle overlay click
             startOverlay.addEventListener('click', (e) => {
@@ -4235,6 +4406,9 @@
         
         // Initialize BGM player
         const bgmPlayer = new BGMPlayer();
+        
+        // Load saved settings
+        loadSettings();
         
         // Initialize loop audio volume
         updateLoopAudioVolume();
